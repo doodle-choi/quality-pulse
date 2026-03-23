@@ -1,0 +1,12 @@
+# Crawler Service Dependencies
+fastapi
+uvicorn
+httpx
+requests
+python-dotenv
+pydantic
+pydantic-settings
+redis
+crawl4ai>=0.4.24
+newspaper3k
+playwright

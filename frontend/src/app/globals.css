@@ -1,0 +1,97 @@
+@import "tailwindcss";
+
+/* =============================================
+   Quality Pulse Design System
+   - Light + Dark mode CSS Variables
+   - Tailwind v4 theme inline registration
+   ============================================= */
+
+:root {
+  --primary: #1428A0;
+  --primary-light: #1e3ab8;
+  --primary-dark: #0f1f7a;
+  --bg: #f4f5f7;
+  --surface: #ffffff;
+  --surface-alt: #f8f9fb;
+  --text: #1a1a2e;
+  --text-secondary: #5a5a7a;
+  --text-muted: #8a8aa0;
+  --border: #e2e4ea;
+  --border-light: #eef0f4;
+  --critical: #dc2626;
+  --critical-bg: #fef2f2;
+  --critical-border: #fecaca;
+  --high: #ea580c;
+  --high-bg: #fff7ed;
+  --high-border: #fed7aa;
+  --medium: #ca8a04;
+  --medium-bg: #fefce8;
+  --medium-border: #fef08a;
+  --low: #6b7280;
+  --low-bg: #f3f4f6;
+  --low-border: #d1d5db;
+}
+
+.dark {
+  --primary: #4d6bff;
+  --primary-light: #6b83ff;
+  --primary-dark: #3a54d4;
+  --bg: #0d0f1a;
+  --surface: #161829;
+  --surface-alt: #1c1f33;
+  --text: #e8e8f0;
+  --text-secondary: #a0a0be;
+  --text-muted: #6a6a88;
+  --border: #2a2d44;
+  --border-light: #22253a;
+  --critical-bg: #1f0808;
+  --critical-border: #5c1010;
+  --high-bg: #1f1208;
+  --high-border: #5c3410;
+  --medium-bg: #1f1c08;
+  --medium-border: #5c5010;
+  --low-bg: #1a1a24;
+  --low-border: #3a3a4a;
+}
+
+@theme inline {
+  --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+
+  --color-primary: var(--primary);
+  --color-primary-light: var(--primary-light);
+  --color-primary-dark: var(--primary-dark);
+
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-alt: var(--surface-alt);
+
+  --color-text: var(--text);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+
+  --color-border: var(--border);
+  --color-border-light: var(--border-light);
+
+  --color-critical: var(--critical);
+  --color-critical-bg: var(--critical-bg);
+  --color-critical-border: var(--critical-border);
+
+  --color-high: var(--high);
+  --color-high-bg: var(--high-bg);
+  --color-high-border: var(--high-border);
+
+  --color-medium: var(--medium);
+  --color-medium-bg: var(--medium-bg);
+  --color-medium-border: var(--medium-border);
+
+  --color-low: var(--low);
+  --color-low-bg: var(--low-bg);
+  --color-low-border: var(--low-border);
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
