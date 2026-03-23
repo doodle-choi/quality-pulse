@@ -77,7 +77,7 @@ jobs:
           username: ${{ secrets.GCP_VM_USER }}
           key: ${{ secrets.GCP_VM_SSH_KEY }}
           script: |
-            PROJECT_DIR="~/Workspace/Projects/quality-pulse"
+            PROJECT_DIR="$HOME/Workspace/Projects/quality-pulse"
             if [ ! -d "$PROJECT_DIR" ]; then
               mkdir -p "$(dirname "$PROJECT_DIR")"
               git clone https://github.com/${{ github.repository }}.git "$PROJECT_DIR"
