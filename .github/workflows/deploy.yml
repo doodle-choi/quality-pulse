@@ -77,10 +77,12 @@ jobs:
           username: ${{ secrets.GCP_VM_USER }}
           key: ${{ secrets.GCP_VM_SSH_KEY }}
           script: |
-            if [ ! -d "~/quality-pulse" ]; then
-              git clone https://github.com/${{ github.repository }}.git ~/quality-pulse
+            PROJECT_DIR="~/Workspace/Projects/quality-pulse"
+            if [ ! -d "$PROJECT_DIR" ]; then
+              mkdir -p "$(dirname "$PROJECT_DIR")"
+              git clone https://github.com/${{ github.repository }}.git "$PROJECT_DIR"
             fi
-            cd ~/quality-pulse
+            cd "$PROJECT_DIR"
             git pull origin ${{ github.ref_name }}
             docker compose -f docker-compose.prod.yml pull
             docker compose -f docker-compose.prod.yml up -d
