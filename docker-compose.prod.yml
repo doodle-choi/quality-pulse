@@ -25,7 +25,7 @@ services:
       - qp-network
 
   backend:
-    image: ghcr.io/${GITHUB_REPOSITORY}/backend:latest
+    image: ghcr.io/doodle-choi/quality-pulse/backend:latest
     container_name: qp-backend-prod
     environment:
       POSTGRES_SERVER: db
@@ -43,7 +43,7 @@ services:
       - qp-network
 
   frontend:
-    image: ghcr.io/${GITHUB_REPOSITORY}/frontend:latest
+    image: ghcr.io/doodle-choi/quality-pulse/frontend:latest
     container_name: qp-frontend-prod
     environment:
       NEXT_PUBLIC_API_URL: https://${DOMAIN_NAME}/api/v1
@@ -54,7 +54,7 @@ services:
       - qp-network
 
   crawler:
-    image: ghcr.io/${GITHUB_REPOSITORY}/crawler:latest
+    image: ghcr.io/doodle-choi/quality-pulse/crawler:latest
     container_name: qp-crawler-prod
     environment:
       POSTGRES_SERVER: db
@@ -73,7 +73,7 @@ services:
       - qp-network
 
   nginx:
-    image: ghcr.io/${GITHUB_REPOSITORY}/nginx:latest
+    image: ghcr.io/doodle-choi/quality-pulse/nginx:latest
     container_name: qp-nginx-prod
     ports:
       - "80:80"

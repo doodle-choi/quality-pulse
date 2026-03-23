@@ -28,42 +28,45 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata (tags, labels)
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: |
-            type=ref,event=branch
-            type=sha,format=short
+      - name: Lowercase repo name
+        run: |
+          echo "IMAGE_NAME_LC=${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
 
       - name: Build and push Frontend
         uses: docker/build-push-action@v5
         with:
           context: ./frontend
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/frontend:${{ github.ref_name }}
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LC }}/frontend:${{ github.ref_name }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LC }}/frontend:latest
 
       - name: Build and push Backend
         uses: docker/build-push-action@v5
         with:
           context: ./backend
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/backend:${{ github.ref_name }}
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LC }}/backend:${{ github.ref_name }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LC }}/backend:latest
 
       - name: Build and push Crawler
         uses: docker/build-push-action@v5
         with:
           context: ./crawler
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/crawler:${{ github.ref_name }}
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LC }}/crawler:${{ github.ref_name }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LC }}/crawler:latest
 
       - name: Build and push Nginx
         uses: docker/build-push-action@v5
         with:
           context: ./nginx
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/nginx:${{ github.ref_name }}
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LC }}/nginx:${{ github.ref_name }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LC }}/nginx:latest
 
   deploy:
     needs: build-and-push
