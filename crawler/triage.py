@@ -14,6 +14,8 @@ class AnalyzedIssue(BaseModel):
     issue_type: str = Field(..., description="이슈 유형 (Recall, Quality, Safety, Service)")
     description: str = Field(..., description="이슈에 대한 간략한 상세 요약")
     region: str = Field(..., description="영향 지역 (예: USA, Europe, Global)")
+    failed_component: Optional[str] = Field(None, description="문제가 발생한 핵심 부품/소프트웨어 (예: Compressor Relay, Lithium-ion Battery, Door Latch). 불명확하면 null")
+    root_cause: Optional[str] = Field(None, description="근본 원인 기술적 요약 (예: Electrical Short Circuit, Thermal Runaway, Mechanical stress). 불명확하면 null")
     source_url: str = Field(default="N/A", description="출처 URL")
     published_at: Optional[str] = Field(None, description="이슈의 공식 발표일 또는 발생일 (ISO 형식: YYYY-MM-DD). 본문에 날짜 정보가 없으면 null")
 
@@ -34,7 +36,7 @@ async def parse_markdown_with_llm(markdown_content: str, source_url: str = "N/A"
         model_name = f"gemini/{model_name}"
         
     prompt = f"""
-    You are an expert HOME APPLIANCE quality and safety intelligence analyst.
+    You are an expert HOME APPLIANCE quality and safety forensic engineer.
     Below is a raw markdown or JSON data extracted from a crawler target.
 
     CRITICAL RULE 0: The RAW TEXT may be in Korean, Japanese, or other languages. You MUST translate the extracted information into English.
@@ -44,6 +46,8 @@ async def parse_markdown_with_llm(markdown_content: str, source_url: str = "N/A"
     If the text does not contain any home appliance issues, you MUST return an empty array [].
 
     CRITICAL RULE 2: You MUST extract EVERY SINGLE DISTINCT INCIDENT found in the text as a separate JSON object. Do NOT summarize multiple distinct incidents into one. For example, if there are multiple distinct appliance recalls or issues in the text, your JSON array MUST contain separate objects for each. Be exhaustive.
+
+    CRITICAL RULE 3: Act as a forensic engineer. Deeply analyze the text to identify the specific 'failed_component' (e.g., 'Compressor Relay', 'Heating Element') and the technical 'root_cause' (e.g., 'Electrical Short', 'Thermal Runaway'). Prioritize precise technical terms over marketing jargon.
 
     You MUST return the final answer as a VALID JSON ARRAY OF OBJECTS matching this schema exactly.
     Do NOT include markdown formatting or extra text outside the JSON array.
@@ -58,6 +62,8 @@ async def parse_markdown_with_llm(markdown_content: str, source_url: str = "N/A"
             "issue_type": "Recall / Quality / Safety / Service",
             "description": "3-sentence summary of incident 1",
             "region": "Country (e.g. USA)",
+            "failed_component": "Specific failing part (or null)",
+            "root_cause": "Technical root cause of failure (or null)",
             "source_url": "Extract the specific URL for this incident from the raw text. If not found, use: {source_url}",
             "published_at": "YYYY-MM-DD or null"
         }}

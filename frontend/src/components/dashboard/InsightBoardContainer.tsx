@@ -5,6 +5,7 @@ import { IssueFeed } from "@/components/dashboard/IssueFeed";
 import { FilterBar } from "@/components/dashboard/FilterBar";
 import { IssueAttr } from "@/components/dashboard/IssueCard";
 import { WorldMap } from "@/components/dashboard/WorldMap";
+import { ComponentMatrix } from "@/components/dashboard/ComponentMatrix";
 import { AutoRefresh } from "@/components/AutoRefresh";
 
 export function InsightBoardContainer({ initialIssues }: { initialIssues: IssueAttr[] }) {
@@ -13,6 +14,7 @@ export function InsightBoardContainer({ initialIssues }: { initialIssues: IssueA
   const [selectedBrand, setSelectedBrand] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedSeverity, setSelectedSeverity] = useState("");
+  const [selectedComponent, setSelectedComponent] = useState("");
   const [sortBy, setSortBy] = useState("newest");
 
   // Filter options extraction
@@ -31,8 +33,9 @@ export function InsightBoardContainer({ initialIssues }: { initialIssues: IssueA
       const matchesBrand = selectedBrand === "" || issue.brand === selectedBrand;
       const matchesCategory = selectedCategory === "" || issue.product_category === selectedCategory;
       const matchesSeverity = selectedSeverity === "" || issue.severity === selectedSeverity;
+      const matchesComponent = selectedComponent === "" || issue.failed_component === selectedComponent;
 
-      return matchesSearch && matchesRegion && matchesBrand && matchesCategory && matchesSeverity;
+      return matchesSearch && matchesRegion && matchesBrand && matchesCategory && matchesSeverity && matchesComponent;
     });
 
     return [...filtered].sort((a, b) => {
@@ -45,18 +48,25 @@ export function InsightBoardContainer({ initialIssues }: { initialIssues: IssueA
       const dateB = new Date(b.created_at).getTime();
       return sortBy === "newest" ? dateB - dateA : dateA - dateB;
     });
-  }, [initialIssues, searchQuery, selectedRegion, selectedBrand, selectedCategory, selectedSeverity, sortBy]);
+  }, [initialIssues, searchQuery, selectedRegion, selectedBrand, selectedCategory, selectedSeverity, selectedComponent, sortBy]);
 
   return (
     <div className="flex flex-col gap-6">
       <AutoRefresh interval={15000} />
       
-      {/* 1. Spatial Intelligence Board */}
-      <WorldMap 
-        issues={initialIssues} 
-        selectedRegion={selectedRegion}
-        onRegionClick={setSelectedRegion} 
-      />
+      {/* 1. Spatial Intelligence & Component Matrix */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+        <WorldMap 
+          issues={initialIssues} 
+          selectedRegion={selectedRegion}
+          onRegionClick={setSelectedRegion} 
+        />
+        <ComponentMatrix 
+          issues={initialIssues}
+          selectedComponent={selectedComponent}
+          onComponentClick={setSelectedComponent}
+        />
+      </div>
 
       {/* 2. Advanced Filtering */}
       <FilterBar 

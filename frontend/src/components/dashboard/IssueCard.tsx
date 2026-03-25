@@ -13,6 +13,8 @@ export interface IssueAttr {
   issue_type: string;
   description: string;
   region: string;
+  failed_component?: string;
+  root_cause?: string;
   source_url: string;
   created_at: string;
   published_at?: string;
@@ -73,6 +75,22 @@ export function IssueCard({ issue }: { issue: IssueAttr }) {
         </div>
         
         <h3 className="text-[15px] font-bold leading-[1.4] text-text">{issue.title}</h3>
+
+        {/* Technical Data Tags (Phase 3) */}
+        {(issue.failed_component || issue.root_cause) && (
+          <div className="flex flex-wrap items-center gap-2 mt-0.5">
+            {issue.failed_component && (
+              <span className="text-[10px] font-mono text-purple-600 bg-purple-500/10 border border-purple-500/20 px-1.5 py-0.5 rounded flex items-center gap-1">
+                <span className="opacity-60 text-[9px]">CMP</span> {issue.failed_component}
+              </span>
+            )}
+            {issue.root_cause && (
+              <span className="text-[10px] font-mono text-rose-600 bg-rose-500/10 border border-rose-500/20 px-1.5 py-0.5 rounded flex items-center gap-1">
+                <span className="opacity-60 text-[9px]">CAUSE</span> {issue.root_cause}
+              </span>
+            )}
+          </div>
+        )}
         
         <div className="flex items-center gap-3 text-[12px] text-text-muted mt-0.5">
           <span className="flex items-center gap-1">

@@ -16,6 +16,8 @@ class Issue(Base):
     issue_type = Column(String, index=True, nullable=False)  # Recall, Quality, Safety, Service
     source_url = Column(String, nullable=False)
     region = Column(String, index=True, nullable=True)
+    failed_component = Column(String, index=True, nullable=True)
+    root_cause = Column(String, nullable=True)
     published_at = Column(DateTime(timezone=True), nullable=True)
     
     created_at = Column(DateTime(timezone=True), server_default=func.now())
