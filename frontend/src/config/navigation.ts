@@ -26,7 +26,7 @@ export const NAV_ITEMS: NavGroup[] = [
     label: "Overview",
     items: [
       { name: "Dashboard", href: "/", icon: LayoutDashboard },
-      { name: "Intelligence Feed", href: "/", icon: Activity, badge: "Live" },
+      { name: "Insight Board", href: "/insights", icon: Activity, badge: "Live" },
       { name: "Risk Analytics", href: "#", icon: BarChart3 },
     ]
   },
