@@ -2,7 +2,7 @@ import asyncio
 import logging
 import random
 import httpx
-from typing import Any, Dict, Optional, List
+from typing import Any, Dict, Optional
 
 logger = logging.getLogger("CrawlerUtils")
 

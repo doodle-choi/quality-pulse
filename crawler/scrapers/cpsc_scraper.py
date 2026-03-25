@@ -38,7 +38,7 @@ async def scrape_cpsc_recalls(url: str = "https://www.cpsc.gov/Recalls") -> str:
         logger.error(f"CPSC Scraper (Crawl4AI) failed: {e}")
 
     # 2단계: httpx/BeautifulSoup Fallback
-    logger.info(f"Starting Fallback (httpx) for CPSC...")
+    logger.info("Starting Fallback (httpx) for CPSC...")
     try:
         async with httpx.AsyncClient(timeout=30.0, follow_redirects=True) as client:
             headers = {
@@ -59,7 +59,7 @@ async def scrape_cpsc_recalls(url: str = "https://www.cpsc.gov/Recalls") -> str:
                     logger.info(f"Fallback success for CPSC (extracted {len(text_content)} chars)")
                     return text_content
                 else:
-                    logger.warning(f"Fallback content too short for CPSC")
+                    logger.warning("Fallback content too short for CPSC")
             else:
                 logger.error(f"Fallback failed for CPSC (HTTP {resp.status_code})")
     except Exception as e:
