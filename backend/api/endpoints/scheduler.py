@@ -1,4 +1,4 @@
-from fastapi import APIRouter, BackgroundTasks
+from fastapi import APIRouter, BackgroundTasks, HTTPException
 from pydantic import BaseModel
 from core.scheduler import get_scheduler_status, trigger_pipeline_now, update_interval
 
@@ -21,7 +21,9 @@ async def trigger_now(background_tasks: BackgroundTasks):
 @router.patch("/config")
 def update_config(data: IntervalUpdate):
     """스케줄 실행 간격을 동적으로 변경합니다."""
+    # SECURITY: Ensure clients receive a 400 Bad Request error for validation failures
+    # instead of a 200 OK to prevent masking application state and errors
     if data.hours < 1 or data.hours > 168:
-        return {"error": "Interval must be between 1 and 168 hours."}
+        raise HTTPException(status_code=400, detail="Interval must be between 1 and 168 hours.")
     update_interval(data.hours)
     return get_scheduler_status()
