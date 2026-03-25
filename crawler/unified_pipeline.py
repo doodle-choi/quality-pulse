@@ -14,7 +14,7 @@ from scrapers.gdelt_fetcher import fetch_gdelt_events
 from scrapers.generic_scraper import scrape_generic_url
 from triage import parse_markdown_with_llm, AnalyzedIssue
 from core.targets import TARGET_SOURCES
-from core.dedup import is_content_changed, is_url_seen
+from core.dedup import is_content_changed
 from datetime import datetime
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
