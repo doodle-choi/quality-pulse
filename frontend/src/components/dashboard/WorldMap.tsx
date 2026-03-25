@@ -1,0 +1,160 @@
+"use client";
+
+import React, { useMemo } from "react";
+import { ComposableMap, Geographies, Geography, Sphere, Graticule } from "react-simple-maps";
+import { IssueAttr } from "@/components/dashboard/IssueCard";
+
+const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
+
+// Map our regions to the country names present in TopoJSON
+const REGION_MAPPING: Record<string, string[]> = {
+  "USA": ["United States of America"],
+  "Korea": ["South Korea", "Dem. Rep. Korea"],
+  "Japan": ["Japan"],
+  "Canada": ["Canada"],
+  "Oceania": ["Australia", "New Zealand"],
+  "Europe": ["United Kingdom", "Germany", "France", "Italy", "Spain", "Poland", "Netherlands", "Sweden", "Norway"],
+};
+
+// Colors mapping matching the global theme
+const COLORS = {
+  critical: "var(--critical)", // e.g. red
+  high: "var(--high)",         // e.g. orange
+  medium: "var(--primary)",    // e.g. blue/indigo
+  low: "var(--low)",           // e.g. gray/green
+  default: "var(--surface-alt)",
+  hover: "var(--primary)",
+  border: "var(--border)",
+  graticule: "var(--border-light)",
+};
+
+interface WorldMapProps {
+  issues: IssueAttr[];
+  selectedRegion: string;
+  onRegionClick: (region: string) => void;
+}
+
+export function WorldMap({ issues, selectedRegion, onRegionClick }: WorldMapProps) {
+  // Calculate issue counts and max severity per mapped region
+  const regionStats = useMemo(() => {
+    const stats: Record<string, { count: number, severity: string }> = {};
+    
+    issues.forEach(issue => {
+      const region = issue.region || "Global";
+      if (!stats[region]) {
+        stats[region] = { count: 0, severity: "Low" };
+      }
+      stats[region].count += 1;
+      
+      // Escalate severity if a higher one is found
+      const sevLevels = ["Low", "Medium", "High", "Critical"];
+      if (sevLevels.indexOf(issue.severity) > sevLevels.indexOf(stats[region].severity)) {
+        stats[region].severity = issue.severity;
+      }
+    });
+    
+    return stats;
+  }, [issues]);
+
+  const getRegionFromGeoName = (geoName: string) => {
+    for (const [region, countries] of Object.entries(REGION_MAPPING)) {
+      if (countries.includes(geoName)) {
+        return region;
+      }
+    }
+    return null;
+  };
+
+  return (
+    <div className="w-full h-[350px] sm:h-[450px] bg-surface border border-border rounded-xl shadow-sm overflow-hidden flex flex-col relative group">
+      <div className="absolute top-5 left-6 z-10 pointer-events-none">
+        <h3 className="text-[16px] font-bold text-text flex items-center gap-2">
+          Global Risk Hotspots
+          {selectedRegion && (
+            <span className="text-[10px] bg-primary/20 text-primary px-2 py-0.5 rounded-full uppercase tracking-widest pointer-events-auto cursor-pointer" onClick={() => onRegionClick("")}>
+              {selectedRegion} &times;
+            </span>
+          )}
+        </h3>
+        <p className="text-[11px] text-text-muted mt-1 max-w-[200px] leading-relaxed">
+          Interactive intelligence board. Click a highlighted region to filter issues.
+        </p>
+      </div>
+
+      <div className="flex-1 w-full h-full">
+        <ComposableMap
+          projectionConfig={{
+            rotate: [-10, 0, 0],
+            scale: 147
+          }}
+          className="w-full h-full outline-none"
+        >
+          <Sphere stroke={COLORS.border} strokeWidth={0.5} id="sphere" fill="transparent" />
+          <Graticule stroke={COLORS.graticule} strokeWidth={0.5} />
+          
+          <Geographies geography={geoUrl}>
+            {({ geographies }) =>
+              geographies.map((geo) => {
+                const geoName = geo.properties.name;
+                const region = getRegionFromGeoName(geoName);
+                const stats = region ? regionStats[region] : null;
+                const isSelected = selectedRegion === region;
+                
+                let fill = COLORS.default;
+                if (stats) {
+                  if (stats.severity === "Critical") fill = COLORS.critical;
+                  else if (stats.severity === "High") fill = COLORS.high;
+                  else fill = COLORS.medium;
+                }
+
+                // Dim non-selected regions if a region is selected
+                if (selectedRegion && !isSelected) {
+                   // Make it look dimmed but retain some color
+                   fill = "var(--surface-alt)";
+                } else if (selectedRegion && isSelected) {
+                   fill = COLORS.hover; // Highlight selection strongly
+                }
+
+                return (
+                  <Geography
+                    key={geo.rsmKey}
+                    geography={geo}
+                    fill={fill}
+                    stroke={COLORS.border}
+                    strokeWidth={isSelected ? 1 : 0.5}
+                    style={{
+                      default: { outline: "none", transition: "all 0.2s ease" },
+                      hover: { fill: COLORS.hover, opacity: 0.9, outline: "none", cursor: region ? "pointer" : "default" },
+                      pressed: { outline: "none" },
+                    }}
+                    onClick={() => {
+                      if (region) {
+                        onRegionClick(selectedRegion === region ? "" : region);
+                      }
+                    }}
+                  />
+                );
+              })
+            }
+          </Geographies>
+        </ComposableMap>
+      </div>
+      
+      {/* Legend */}
+      <div className="absolute bottom-5 left-6 z-10 flex items-center gap-4 bg-surface/80 backdrop-blur-md px-3.5 py-2.5 rounded-xl border border-border shadow-sm">
+        <div className="flex items-center gap-2">
+          <div className="w-2.5 h-2.5 rounded-full bg-[var(--critical)] shadow-[0_0_8px_var(--critical)]"></div>
+          <span className="text-[10px] text-text-secondary font-bold uppercase tracking-wider">Critical</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-2.5 h-2.5 rounded-full bg-[var(--high)] shadow-[0_0_8px_var(--high)]"></div>
+          <span className="text-[10px] text-text-secondary font-bold uppercase tracking-wider">High</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-2.5 h-2.5 rounded-full bg-[var(--primary)] shadow-[0_0_8px_var(--primary)]"></div>
+          <span className="text-[10px] text-text-secondary font-bold uppercase tracking-wider">Active</span>
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -6,17 +6,20 @@ import { IssueFeed } from "@/components/dashboard/IssueFeed";
 import { FilterBar } from "@/components/dashboard/FilterBar";
 import { TimelineChart } from "@/components/dashboard/TimelineChart";
 import { IssueAttr } from "@/components/dashboard/IssueCard";
+import { WorldMap } from "@/components/dashboard/WorldMap";
 
 import { AutoRefresh } from "@/components/AutoRefresh";
 
 export function DashboardContainer({ initialIssues }: { initialIssues: IssueAttr[] }) {
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedRegion, setSelectedRegion] = useState("");
   const [selectedBrand, setSelectedBrand] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedSeverity, setSelectedSeverity] = useState("");
   const [sortBy, setSortBy] = useState("newest");
 
   // 필터 옵션 추출
+  const regions = useMemo(() => Array.from(new Set(initialIssues.map(i => i.region || "Global"))).sort(), [initialIssues]);
   const brands = useMemo(() => Array.from(new Set(initialIssues.map(i => i.brand))).sort(), [initialIssues]);
   const categories = useMemo(() => Array.from(new Set(initialIssues.map(i => i.product_category))).sort(), [initialIssues]);
   const severities = ["Critical", "High", "Medium", "Low"];
@@ -27,11 +30,12 @@ export function DashboardContainer({ initialIssues }: { initialIssues: IssueAttr
       const matchesSearch = 
         issue.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         issue.description?.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesRegion = selectedRegion === "" || (issue.region || "Global") === selectedRegion;
       const matchesBrand = selectedBrand === "" || issue.brand === selectedBrand;
       const matchesCategory = selectedCategory === "" || issue.product_category === selectedCategory;
       const matchesSeverity = selectedSeverity === "" || issue.severity === selectedSeverity;
 
-      return matchesSearch && matchesBrand && matchesCategory && matchesSeverity;
+      return matchesSearch && matchesRegion && matchesBrand && matchesCategory && matchesSeverity;
     });
 
     // 정렬 로직
@@ -45,7 +49,7 @@ export function DashboardContainer({ initialIssues }: { initialIssues: IssueAttr
       const dateB = new Date(b.created_at).getTime();
       return sortBy === "newest" ? dateB - dateA : dateA - dateB;
     });
-  }, [initialIssues, searchQuery, selectedBrand, selectedCategory, selectedSeverity, sortBy]);
+  }, [initialIssues, searchQuery, selectedRegion, selectedBrand, selectedCategory, selectedSeverity, sortBy]);
 
   // Risk Chart 데이터 실시간 계산
   const riskData = useMemo(() => {
@@ -125,16 +129,26 @@ export function DashboardContainer({ initialIssues }: { initialIssues: IssueAttr
         ))}
       </section>
 
-      {/* 2. Search & Filter Bar */}
+      {/* 2. Insight Board - World Map */}
+      <WorldMap 
+        issues={initialIssues} 
+        selectedRegion={selectedRegion}
+        onRegionClick={setSelectedRegion} 
+      />
+
+      {/* 3. Search & Filter Bar */}
       <FilterBar 
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
+        selectedRegion={selectedRegion}
+        setSelectedRegion={setSelectedRegion}
         selectedBrand={selectedBrand}
         setSelectedBrand={setSelectedBrand}
         selectedCategory={selectedCategory}
         setSelectedCategory={setSelectedCategory}
         selectedSeverity={selectedSeverity}
         setSelectedSeverity={setSelectedSeverity}
+        regions={regions}
         brands={brands}
         categories={categories}
         severities={severities}

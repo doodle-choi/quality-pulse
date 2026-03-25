@@ -2,7 +2,7 @@
 
 import { useTheme } from "next-themes";
 import { Moon, Sun, Menu } from "lucide-react";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useSidebar } from "@/contexts/SidebarContext";
 import { NAV_ITEMS } from "@/config/navigation";
@@ -13,19 +13,20 @@ export function Header() {
   const pathname = usePathname();
   const { toggleMobile } = useSidebar();
 
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+  }, []);
 
   // Determine active breadcrumb based on pathname
-  const breadcrumb = useMemo(() => {
-    for (const group of NAV_ITEMS) {
-      for (const item of group.items) {
-        if (pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href))) {
-          return { group: group.label, item: item.name };
-        }
+  let breadcrumb = { group: "System", item: "Overview" };
+  for (const group of NAV_ITEMS) {
+    for (const item of group.items) {
+      if (pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href))) {
+        breadcrumb = { group: group.label, item: item.name };
       }
     }
-    return { group: "System", item: "Overview" }; // Default fallback
-  }, [pathname]);
+  }
 
   return (
     <header className="sticky top-0 z-40 bg-surface/80 backdrop-blur-md border-bottom border-border h-14 flex items-center shrink-0">
