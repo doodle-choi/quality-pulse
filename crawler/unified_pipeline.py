@@ -3,6 +3,7 @@ import logging
 import os
 import json
 import requests
+import httpx
 from dotenv import load_dotenv
 
 # .env 파일을 최우선 로드
@@ -72,20 +73,24 @@ ISSUE_KEYWORDS = '(Recall OR Lawsuit OR Fire OR Hazard OR Defect OR Explosion)'
 NEWS_QUERY_URL = f"https://newsapi.org/v2/everything?q=(Samsung OR LG OR Whirlpool OR Electrolux OR Bosch OR Miele OR Haier) AND {APPLIANCE_KEYWORDS} AND {ISSUE_KEYWORDS}&sortBy=publishedAt&language=en"
 GDELT_QUERY_URL = f"https://api.gdeltproject.org/api/v2/doc/doc?query=(Samsung OR LG OR Whirlpool OR Electrolux OR Bosch OR Miele OR Haier) {APPLIANCE_KEYWORDS} {ISSUE_KEYWORDS}&mode=artlist&format=json&maxrows=30"
 
-def send_to_backend(issues: list[AnalyzedIssue]):
-    """FastAPI 백엔드로 데이터 영구 저장 요청"""
+async def send_to_backend(issues: list[AnalyzedIssue]):
+    """FastAPI 백엔드로 데이터 영구 저장 요청 (비동기 병렬 처리)"""
     url = os.getenv("API_BASE_URL", "http://localhost:8000/api/v1") + "/issues/"
-    logger.info(f"\n[Backend] Sending {len(issues)} issues to {url}...")
+    logger.info(f"\n[Backend] Sending {len(issues)} issues to {url} concurrently...")
     
-    success_count = 0
-    for issue in issues:
+    async def post_issue(client, issue):
         try:
-            resp = requests.post(url, json=issue.model_dump())
+            resp = await client.post(url, json=issue.model_dump())
             resp.raise_for_status()
             logger.info(f"✅ Success: Saved '{issue.title}' to DB.")
-            success_count += 1
+            return True
         except Exception as e:
             logger.error(f"❌ Fail: Could not save '{issue.title}': {e}")
+            return False
+
+    async with httpx.AsyncClient() as client:
+        results = await asyncio.gather(*(post_issue(client, issue) for issue in issues))
+        success_count = sum(1 for r in results if r)
             
     return success_count
 
@@ -156,7 +161,7 @@ async def run_unified_pipeline():
         total_saved = 0
         if all_issues:
             tracker.log(f"Syncing {len(all_issues)} total issues to database")
-            total_saved = send_to_backend(all_issues)
+            total_saved = await send_to_backend(all_issues)
             tracker.update_stats(saved=total_saved)
         else:
             tracker.log("No new unique issues discovered in this run.")
