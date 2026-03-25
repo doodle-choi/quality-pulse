@@ -102,6 +102,11 @@ export function Sidebar() {
                       isActive ? "text-primary" : "text-text-muted group-hover:text-text"
                     )} />
                     {item.name}
+                    {item.badge && (
+                      <span className="ml-2 px-1.5 py-0.5 rounded text-[10px] font-black uppercase tracking-tighter bg-primary/20 text-primary">
+                        {item.badge}
+                      </span>
+                    )}
                     {isActive && (
                       <span className="ml-auto w-1.5 h-1.5 rounded-full bg-primary" />
                     )}

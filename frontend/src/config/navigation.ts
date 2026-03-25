@@ -1,11 +1,9 @@
 import {
   BarChart3,
-  Settings,
   Activity,
   Database,
   Cpu,
   CreditCard,
-  ShieldCheck,
   LayoutDashboard,
   RefreshCw,
   LucideIcon
@@ -15,6 +13,7 @@ export interface NavItem {
   name: string;
   href: string;
   icon: LucideIcon;
+  badge?: string;
 }
 
 export interface NavGroup {
@@ -27,7 +26,7 @@ export const NAV_ITEMS: NavGroup[] = [
     label: "Overview",
     items: [
       { name: "Dashboard", href: "/", icon: LayoutDashboard },
-      { name: "Intelligence Feed", href: "#", icon: Activity },
+      { name: "Intelligence Feed", href: "/", icon: Activity, badge: "Live" },
       { name: "Risk Analytics", href: "#", icon: BarChart3 },
     ]
   },
@@ -37,13 +36,6 @@ export const NAV_ITEMS: NavGroup[] = [
       { name: "Source Monitor", href: "#", icon: Database },
       { name: "Triage Agent", href: "#", icon: Cpu },
       { name: "LLM Cost", href: "#", icon: CreditCard },
-    ]
-  },
-  {
-    label: "Security",
-    items: [
-      { name: "Brand Safety", href: "#", icon: ShieldCheck },
-      { name: "API Keys", href: "#", icon: Settings },
     ]
   },
   {
