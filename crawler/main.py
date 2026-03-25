@@ -2,7 +2,6 @@ from fastapi import FastAPI, BackgroundTasks
 import logging
 import subprocess
 import sys
-import os
 
 app = FastAPI(title="Quality Pulse Crawler Service")
 logger = logging.getLogger("CrawlerService")
@@ -22,7 +21,7 @@ def run_unified_pipeline():
     logger.info("Starting unified_pipeline.py...")
     try:
         # Docker 환경이므로 현재 Python 인터프리터를 사용하여 실행
-        result = subprocess.run([sys.executable, "unified_pipeline.py"], check=True)
+        subprocess.run([sys.executable, "unified_pipeline.py"], check=True)
         logger.info("Pipeline completed successfully.")
     except Exception as e:
         logger.error(f"Pipeline failed: {e}")

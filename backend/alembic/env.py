@@ -1,6 +1,5 @@
 from logging.config import fileConfig
 
-from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
 from alembic import context
@@ -18,12 +17,12 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-import os
-import sys
+import os  # noqa: E402
+import sys  # noqa: E402
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
-from core.config import settings
-from models.issue import Base
+from core.config import settings  # noqa: E402
+from models.issue import Base  # noqa: E402
 
 target_metadata = Base.metadata
 

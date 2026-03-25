@@ -7,17 +7,17 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from scrapers.cpsc_scraper import scrape_cpsc_recalls
-from scrapers.cpsc_api_fetcher import fetch_cpsc_recalls
-from scrapers.newsapi_fetcher import fetch_news_api
-from scrapers.gdelt_fetcher import fetch_gdelt_events
-from scrapers.generic_scraper import scrape_generic_url
-from scrapers.reddit_fetcher import fetch_reddit
-from triage import parse_markdown_with_llm, AnalyzedIssue
-from core.targets import TARGET_SOURCES, API_SOURCES
-from core.dedup import is_content_changed
-from core.utils import fetch_with_retry, post_to_backend_async
-from datetime import datetime
+from scrapers.cpsc_scraper import scrape_cpsc_recalls  # noqa: E402
+from scrapers.cpsc_api_fetcher import fetch_cpsc_recalls  # noqa: E402
+from scrapers.newsapi_fetcher import fetch_news_api  # noqa: E402
+from scrapers.gdelt_fetcher import fetch_gdelt_events  # noqa: E402
+from scrapers.generic_scraper import scrape_generic_url  # noqa: E402
+from scrapers.reddit_fetcher import fetch_reddit  # noqa: E402
+from triage import parse_markdown_with_llm  # noqa: E402
+from core.targets import TARGET_SOURCES, API_SOURCES  # noqa: E402
+from core.dedup import is_content_changed  # noqa: E402
+from core.utils import post_to_backend_async  # noqa: E402
+from datetime import datetime  # noqa: E402
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger("UnifiedPipeline")
@@ -58,7 +58,8 @@ class CrawlTracker:
         self.total_saved += saved
 
     async def finish_job(self, status="completed"):
-        if not self.job_id: return
+        if not self.job_id:
+            return
         try:
             payload = {
                 "status": status,

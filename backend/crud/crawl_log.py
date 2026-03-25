@@ -1,7 +1,6 @@
 from sqlalchemy.orm import Session
 from models.issue import CrawlLog
 from schemas.crawl_log import CrawlLogCreate, CrawlLogUpdate
-from datetime import datetime
 
 def get_crawl_logs(db: Session, skip: int = 0, limit: int = 100):
     return db.query(CrawlLog).order_by(CrawlLog.start_time.desc()).offset(skip).limit(limit).all()
