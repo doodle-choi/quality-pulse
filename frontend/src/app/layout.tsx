@@ -3,6 +3,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Header } from "@/components/Header";
 import { Sidebar } from "@/components/layout/Sidebar";
+import { SidebarProvider } from "@/contexts/SidebarContext";
 
 export const metadata: Metadata = {
   title: "Quality Pulse | Appliance Issue Tracker",
@@ -26,15 +27,17 @@ export default function RootLayout({
           enableSystem={false}
           disableTransitionOnChange={false}
         >
-          <div className="flex min-h-screen">
-            <Sidebar />
-            <div className="flex-1 flex flex-col min-w-0 md:pl-[210px]">
-              <Header />
-              <main className="flex-1 p-5 md:p-8 pb-12 w-full max-w-[1400px] mx-auto">
-                {children}
-              </main>
+          <SidebarProvider>
+            <div className="flex min-h-screen relative">
+              <Sidebar />
+              <div className="flex-1 flex flex-col min-w-0 md:pl-[210px]">
+                <Header />
+                <main className="flex-1 p-5 md:p-8 pb-12 w-full max-w-[1400px] mx-auto">
+                  {children}
+                </main>
+              </div>
             </div>
-          </div>
+          </SidebarProvider>
         </ThemeProvider>
       </body>
     </html>
