@@ -10,3 +10,4 @@ redis
 crawl4ai>=0.4.24
 newspaper3k
 playwright
+litellm

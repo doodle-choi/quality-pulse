@@ -7,6 +7,8 @@ import { FilterBar } from "@/components/dashboard/FilterBar";
 import { TimelineChart } from "@/components/dashboard/TimelineChart";
 import { IssueAttr } from "@/components/dashboard/IssueCard";
 
+import { AutoRefresh } from "@/components/AutoRefresh";
+
 export function DashboardContainer({ initialIssues }: { initialIssues: IssueAttr[] }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedBrand, setSelectedBrand] = useState("");
@@ -34,6 +36,11 @@ export function DashboardContainer({ initialIssues }: { initialIssues: IssueAttr
 
     // 정렬 로직
     return [...filtered].sort((a, b) => {
+      if (sortBy === "published") {
+        const dateA = new Date(a.published_at || a.created_at).getTime();
+        const dateB = new Date(b.published_at || b.created_at).getTime();
+        return dateB - dateA;
+      }
       const dateA = new Date(a.created_at).getTime();
       const dateB = new Date(b.created_at).getTime();
       return sortBy === "newest" ? dateB - dateA : dateA - dateB;
@@ -66,7 +73,10 @@ export function DashboardContainer({ initialIssues }: { initialIssues: IssueAttr
     });
 
     return last7Days.map(date => {
-      const count = filteredIssues.filter(i => i.created_at.startsWith(date)).length;
+      const count = filteredIssues.filter(i => {
+        const compareDate = i.published_at ? i.published_at.split("T")[0] : i.created_at.split("T")[0];
+        return compareDate === date;
+      }).length;
       return { date: date.slice(5), count }; // MM-DD format
     });
   }, [filteredIssues]);
@@ -78,31 +88,32 @@ export function DashboardContainer({ initialIssues }: { initialIssues: IssueAttr
         label: "Total Filtered Issues", 
         value: filteredIssues.length, 
         color: "text-text", 
-        sub: "현재 필터 조건 일치" 
+        sub: "Matches current filters" 
       },
       { 
         label: "Critical / High Risks", 
         value: filteredIssues.filter(i => i.severity === "Critical" || i.severity === "High").length, 
         color: "text-critical", 
-        sub: "즉각 대응 요망" 
+        sub: "Immediate action required" 
       },
       { 
         label: "Recalls & Lawsuits", 
         value: filteredIssues.filter(i => i.issue_type.includes("Recall") || i.issue_type.includes("Lawsuit")).length, 
         color: "text-primary", 
-        sub: "리콜 및 법적 분쟁" 
+        sub: "Recalls and legal disputes" 
       },
       { 
         label: "Quality & Safety", 
         value: filteredIssues.filter(i => i.issue_type.includes("Quality") || i.issue_type.includes("Safety") || i.issue_type.includes("Service")).length, 
         color: "text-high", 
-        sub: "소비자 안전/품질 불만" 
+        sub: "Consumer safety and quality complaints" 
       },
     ];
   }, [filteredIssues]);
 
   return (
     <div className="flex flex-col gap-6">
+      <AutoRefresh interval={15000} />
       {/* 1. 상단 KPI 요약 카드 (다이내믹) */}
       <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {kpiStats.map((kpi, idx) => (

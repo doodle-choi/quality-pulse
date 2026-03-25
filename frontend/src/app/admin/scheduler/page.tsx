@@ -5,6 +5,7 @@ import {
   RefreshCw, Play, Clock, Settings2, CheckCircle2, 
   AlertTriangle, Loader2, Timer, Zap 
 } from "lucide-react";
+import { API_BASE_URL } from "@/config";
 
 interface SchedulerStatus {
   is_running: boolean;
@@ -22,7 +23,7 @@ export default function SchedulerPage() {
 
   const fetchStatus = useCallback(async () => {
     try {
-      const res = await fetch("http://localhost:8000/api/v1/scheduler/status");
+      const res = await fetch(`${API_BASE_URL}/scheduler/status`);
       if (res.ok) {
         const data = await res.json();
         setStatus(data);
@@ -45,7 +46,7 @@ export default function SchedulerPage() {
     setTriggering(true);
     setTriggerMessage("");
     try {
-      const res = await fetch("http://localhost:8000/api/v1/scheduler/trigger", { method: "POST" });
+      const res = await fetch(`${API_BASE_URL}/scheduler/trigger`, { method: "POST" });
       if (res.ok) {
         const data = await res.json();
         setTriggerMessage(data.message);
@@ -60,7 +61,7 @@ export default function SchedulerPage() {
 
   const handleIntervalUpdate = async () => {
     try {
-      const res = await fetch("http://localhost:8000/api/v1/scheduler/config", {
+      const res = await fetch(`${API_BASE_URL}/scheduler/config`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ hours: newInterval })

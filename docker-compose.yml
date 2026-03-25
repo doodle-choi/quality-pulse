@@ -74,6 +74,8 @@ services:
       REDIS_PASSWORD: ${REDIS_PASSWORD}
       GEMINI_API_KEY: ${GEMINI_API_KEY}
       NEWS_API_KEY: ${NEWS_API_KEY}
+      API_BASE_URL: http://backend:8000/api/v1
+      LLM_MODEL: gemini/gemini-2.5-flash
     depends_on:
       - db
       - redis

@@ -15,6 +15,7 @@ export interface IssueAttr {
   region: string;
   source_url: string;
   created_at: string;
+  published_at?: string;
 }
 
 const severityBorderMap = {
@@ -73,7 +74,21 @@ export function IssueCard({ issue }: { issue: IssueAttr }) {
         <h3 className="text-[15px] font-bold leading-[1.4] text-text">{issue.title}</h3>
         
         <div className="flex items-center gap-3 text-[12px] text-text-muted mt-0.5">
-          <span>{mounted ? new Date(issue.created_at).toLocaleString() : ""}</span>
+          <span className="flex items-center gap-1">
+            {mounted ? (
+              <>
+                {issue.published_at ? (
+                  <span title={`Published: ${new Date(issue.published_at).toLocaleString()}`}>
+                    📅 {new Date(issue.published_at).toLocaleDateString()}
+                  </span>
+                ) : (
+                  <span title={`Found: ${new Date(issue.created_at).toLocaleString()}`}>
+                    🕒 {new Date(issue.created_at).toLocaleDateString()}
+                  </span>
+                )}
+              </>
+            ) : ""}
+          </span>
           <span>•</span>
           <span>{issue.region}</span>
           <ChevronDown 

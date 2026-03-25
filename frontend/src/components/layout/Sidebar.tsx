@@ -15,6 +15,7 @@ import {
   RefreshCw
 } from "lucide-react";
 import { clsx } from "clsx";
+import { API_BASE_URL } from "@/config";
 
 const NAV_ITEMS = [
   {
@@ -58,7 +59,7 @@ export function Sidebar() {
   useEffect(() => {
     const fetchScheduler = async () => {
       try {
-        const res = await fetch("http://localhost:8000/api/v1/scheduler/status");
+        const res = await fetch(`${API_BASE_URL}/scheduler/status`);
         if (res.ok) {
           const data = await res.json();
           setSchedulerActive(data.is_running);

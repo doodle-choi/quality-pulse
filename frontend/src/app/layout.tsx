@@ -5,8 +5,8 @@ import { Header } from "@/components/Header";
 import { Sidebar } from "@/components/layout/Sidebar";
 
 export const metadata: Metadata = {
-  title: "Quality Pulse | 가전 이슈 트래커",
-  description: "글로벌 가전 결함 및 리콜 통합 관제 대시보드",
+  title: "Quality Pulse | Appliance Issue Tracker",
+  description: "Global Appliance Defect and Recall Integrated Control Dashboard",
 };
 
 export default function RootLayout({

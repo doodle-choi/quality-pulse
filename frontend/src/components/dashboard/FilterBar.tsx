@@ -98,7 +98,8 @@ export function FilterBar({
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
           >
-            <option value="newest">Newest First</option>
+            <option value="newest">Newest Discovery</option>
+            <option value="published">Published Date</option>
             <option value="oldest">Oldest First</option>
           </select>
           
