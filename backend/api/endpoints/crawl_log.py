@@ -5,10 +5,11 @@ from typing import List
 from db.database import get_db
 from schemas.crawl_log import CrawlLog, CrawlLogCreate, CrawlLogUpdate
 from crud import crawl_log as crud_crawl_log
+from api.deps import verify_api_key
 
 router = APIRouter()
 
-@router.post("/", response_model=CrawlLog)
+@router.post("/", response_model=CrawlLog, dependencies=[Depends(verify_api_key)])
 def create_log(log: CrawlLogCreate, db: Session = Depends(get_db)):
     return crud_crawl_log.create_crawl_log(db=db, log=log)
 
@@ -23,7 +24,7 @@ def read_log(log_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Crawl log not found")
     return db_log
 
-@router.patch("/{log_id}", response_model=CrawlLog)
+@router.patch("/{log_id}", response_model=CrawlLog, dependencies=[Depends(verify_api_key)])
 def update_log(log_id: int, log_update: CrawlLogUpdate, db: Session = Depends(get_db)):
     db_log = crud_crawl_log.update_crawl_log(db=db, log_id=log_id, log_update=log_update)
     if not db_log:

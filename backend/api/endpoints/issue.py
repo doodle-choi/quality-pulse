@@ -5,10 +5,11 @@ from typing import List
 from db.database import get_db
 from schemas.issue import Issue, IssueCreate
 from crud import issue as crud_issue
+from api.deps import verify_api_key
 
 router = APIRouter()
 
-@router.post("/", response_model=Issue)
+@router.post("/", response_model=Issue, dependencies=[Depends(verify_api_key)])
 def create_issue(issue: IssueCreate, db: Session = Depends(get_db)):
     """
     새로운 품질/리콜 이슈 테이터를 추가합니다. (주로 Crawler가 호출)
