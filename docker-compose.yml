@@ -32,6 +32,8 @@ services:
   backend:
     build: ./backend
     container_name: quality_pulse_backend
+    command: >
+      bash -c "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 8000"
     environment:
       POSTGRES_SERVER: db
       POSTGRES_USER: ${POSTGRES_USER:-postgres}

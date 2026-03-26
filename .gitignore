@@ -59,6 +59,7 @@ MANIFEST
 .env.production.local
 *.env
 *.env.*
+!.env.example
 
 # OS
 .DS_Store
