@@ -3,6 +3,7 @@ import logging
 import random
 import httpx
 from typing import Any, Dict, Optional
+from core.config import INTERNAL_API_KEY, API_BASE_URL
 
 logger = logging.getLogger("CrawlerUtils")
 
@@ -33,6 +34,9 @@ async def fetch_with_retry(
     
     if "User-Agent" not in headers:
         headers["User-Agent"] = random.choice(USER_AGENTS)
+
+    if url.startswith(API_BASE_URL) and "X-API-Key" not in headers:
+        headers["X-API-Key"] = INTERNAL_API_KEY
 
     async with httpx.AsyncClient(timeout=timeout, follow_redirects=True) as client:
         for attempt in range(max_retries):

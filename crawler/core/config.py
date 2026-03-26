@@ -13,3 +13,4 @@ else:
     REDIS_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}/0"
 
 API_BASE_URL = os.getenv("API_BASE_URL", "http://localhost:8000/api/v1")
+INTERNAL_API_KEY = os.getenv("INTERNAL_API_KEY", "dev_api_key_123")
