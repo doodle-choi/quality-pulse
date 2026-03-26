@@ -6,7 +6,6 @@ import { IssueAttr } from "@/components/dashboard/IssueCard";
 
 const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 
-// Map our regions to the country names present in TopoJSON
 const REGION_MAPPING: Record<string, string[]> = {
   "USA": ["United States of America"],
   "Korea": ["South Korea", "Dem. Rep. Korea"],
@@ -16,12 +15,11 @@ const REGION_MAPPING: Record<string, string[]> = {
   "Europe": ["United Kingdom", "Germany", "France", "Italy", "Spain", "Poland", "Netherlands", "Sweden", "Norway"],
 };
 
-// Colors mapping matching the global theme
 const COLORS = {
-  critical: "var(--critical)", // e.g. red
-  high: "var(--high)",         // e.g. orange
-  medium: "var(--primary)",    // e.g. blue/indigo
-  low: "var(--low)",           // e.g. gray/green
+  critical: "var(--critical)",
+  high: "var(--high)",
+  medium: "var(--primary)",
+  low: "var(--low)",
   default: "var(--surface-alt)",
   hover: "var(--primary)",
   border: "var(--border)",
@@ -35,24 +33,22 @@ interface WorldMapProps {
 }
 
 export function WorldMap({ issues, selectedRegion, onRegionClick }: WorldMapProps) {
-  // Calculate issue counts and max severity per mapped region
   const regionStats = useMemo(() => {
     const stats: Record<string, { count: number, severity: string }> = {};
-    
+    const sevLevels = ["Low", "Medium", "High", "Critical"];
+
     issues.forEach(issue => {
       const region = issue.region || "Global";
       if (!stats[region]) {
         stats[region] = { count: 0, severity: "Low" };
       }
       stats[region].count += 1;
-      
-      // Escalate severity if a higher one is found
-      const sevLevels = ["Low", "Medium", "High", "Critical"];
+
       if (sevLevels.indexOf(issue.severity) > sevLevels.indexOf(stats[region].severity)) {
         stats[region].severity = issue.severity;
       }
     });
-    
+
     return stats;
   }, [issues]);
 
@@ -99,21 +95,18 @@ export function WorldMap({ issues, selectedRegion, onRegionClick }: WorldMapProp
                 const region = getRegionFromGeoName(geoName);
                 const stats = region ? regionStats[region] : null;
                 const isSelected = selectedRegion === region;
-                
-                let fill = COLORS.default;
-                if (stats) {
-                  if (stats.severity === "Critical") fill = COLORS.critical;
-                  else if (stats.severity === "High") fill = COLORS.high;
-                  else fill = COLORS.medium;
-                }
 
-                // Dim non-selected regions if a region is selected
-                if (selectedRegion && !isSelected) {
-                   // Make it look dimmed but retain some color
-                   fill = "var(--surface-alt)";
-                } else if (selectedRegion && isSelected) {
-                   fill = COLORS.hover; // Highlight selection strongly
-                }
+                const getFillColor = () => {
+                  if (selectedRegion) {
+                    return isSelected ? COLORS.hover : "var(--surface-alt)";
+                  }
+                  if (!stats) return COLORS.default;
+                  if (stats.severity === "Critical") return COLORS.critical;
+                  if (stats.severity === "High") return COLORS.high;
+                  return COLORS.medium;
+                };
+
+                const fill = getFillColor();
 
                 return (
                   <Geography
