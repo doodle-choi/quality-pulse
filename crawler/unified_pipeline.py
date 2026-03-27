@@ -175,15 +175,17 @@ async def run_unified_pipeline():
         tracker.update_stats(scraped=len(all_issues))
 
         if all_issues:
-            tracker.log(f"Syncing {len(all_issues)} issues to database...")
-            api_url = os.getenv("API_BASE_URL", "http://localhost:8000/api/v1") + "/issues/"
+            tracker.log(f"Syncing {len(all_issues)} issues to database via bulk endpoint...")
+            api_url = os.getenv("API_BASE_URL", "http://localhost:8000/api/v1") + "/issues/bulk"
             
-            sync_tasks = [post_to_backend_async(api_url, issue.model_dump()) for issue in all_issues]
-            sync_results = await asyncio.gather(*sync_tasks)
+            payload = [issue.model_dump() for issue in all_issues]
+            sync_success = await post_to_backend_async(api_url, payload)
             
-            success_count = sum(1 for r in sync_results if r)
-            tracker.log(f"✅ Successfully saved {success_count}/{len(all_issues)} issues.")
-            tracker.update_stats(saved=success_count)
+            if sync_success:
+                tracker.log(f"✅ Successfully synced {len(all_issues)} issues in bulk.")
+                tracker.update_stats(saved=len(all_issues))
+            else:
+                tracker.log(f"❌ Failed to sync issues in bulk.")
         else:
             tracker.log("No new unique issues discovered.")
 
