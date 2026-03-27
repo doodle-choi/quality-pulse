@@ -34,6 +34,7 @@ export function Header() {
         {/* Left: Breadcrumb/Context */}
         <div className="flex items-center gap-3">
           <button 
+            aria-label="Toggle mobile menu"
             className="md:hidden text-text-secondary hover:text-text p-1 -ml-1 rounded-md active:bg-surface-alt"
             onClick={toggleMobile}
           >
@@ -60,6 +61,7 @@ export function Header() {
           <div className="w-px h-6 bg-border mx-1 hidden sm:block" />
 
           <button
+            aria-label="Toggle theme"
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
             className="flex items-center gap-2 bg-surface text-text font-bold border border-border hover:border-primary px-3 py-1.5 rounded-lg text-xs transition-all shadow-sm active:scale-95"
           >
