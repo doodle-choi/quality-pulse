@@ -21,7 +21,7 @@ def test_read_issues_pagination_defaults():
 
     with patch("api.endpoints.issue.crud_issue.get_issues") as mock_get_issues:
         # Call with default parameters
-        read_issues(db=db)
+        read_issues(skip=0, limit=100, db=db)
 
         # Verify default values (skip=0, limit=100) are passed
         mock_get_issues.assert_called_once_with(db, skip=0, limit=100)

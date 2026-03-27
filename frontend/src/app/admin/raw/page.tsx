@@ -2,6 +2,8 @@ import { Suspense } from "react";
 import { IssueAttr } from "@/components/dashboard/IssueCard";
 import { INTERNAL_API_BASE_URL } from "@/config";
 
+export const dynamic = "force-dynamic";
+
 async function getRawIssues(): Promise<IssueAttr[]> {
   try {
     const res = await fetch(`${INTERNAL_API_BASE_URL}/issues/`, { 
