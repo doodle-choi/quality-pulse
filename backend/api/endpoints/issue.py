@@ -9,6 +9,13 @@ from api.deps import verify_api_key
 
 router = APIRouter()
 
+@router.post("/bulk", response_model=List[Issue], dependencies=[Depends(verify_api_key)])
+def create_issues_bulk(issues: List[IssueCreate], db: Session = Depends(get_db)):
+    """
+    여러 품질/리콜 이슈 테이터를 한번에 추가합니다. (주로 Crawler가 호출)
+    """
+    return crud_issue.create_issues(db=db, issues=issues)
+
 @router.post("/", response_model=Issue, dependencies=[Depends(verify_api_key)])
 def create_issue(issue: IssueCreate, db: Session = Depends(get_db)):
     """

@@ -1,3 +1,4 @@
+from typing import List
 from sqlalchemy.orm import Session
 from models.issue import Issue
 from schemas.issue import IssueCreate
@@ -7,6 +8,37 @@ def get_issues(db: Session, skip: int = 0, limit: int = 100):
     DB에서 이슈 목록을 페이징 처리하여 조회합니다.
     """
     return db.query(Issue).order_by(Issue.created_at.desc()).offset(skip).limit(limit).all()
+
+def create_issues(db: Session, issues: List[IssueCreate]):
+    """
+    Bulk create issues. Optimizes duplicate detection by fetching all matching
+    titles in a single query before performing batch inserts.
+    """
+    if not issues:
+        return []
+
+    incoming_titles = [issue.title for issue in issues]
+
+    # Fetch existing issues that match the incoming titles
+    existing_issues = db.query(Issue).filter(Issue.title.in_(incoming_titles)).all()
+    existing_titles = {issue.title for issue in existing_issues}
+
+    new_issues = []
+    # Deduplicate within the incoming list as well
+    seen_titles = set()
+    for issue in issues:
+        if issue.title not in existing_titles and issue.title not in seen_titles:
+            new_issues.append(Issue(**issue.model_dump()))
+            seen_titles.add(issue.title)
+
+    if new_issues:
+        db.add_all(new_issues)
+        db.commit()
+        for issue in new_issues:
+            db.refresh(issue)
+
+    # Return all issues (existing and newly created)
+    return existing_issues + new_issues
 
 def create_issue(db: Session, issue: IssueCreate):
     """
