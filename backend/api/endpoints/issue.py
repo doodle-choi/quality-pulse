@@ -23,8 +23,10 @@ def create_issue(issue: IssueCreate, db: Session = Depends(get_db)):
     """
     return crud_issue.create_issue(db=db, issue=issue)
 
+from fastapi import Query
+
 @router.get("/", response_model=List[Issue])
-def read_issues(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+def read_issues(skip: int = Query(0, ge=0), limit: int = Query(100, ge=1, le=1000), db: Session = Depends(get_db)):
     """
     저장된 이슈 목록을 조회합니다. (주로 Frontend Next.js 대시보드가 호출)
     """
