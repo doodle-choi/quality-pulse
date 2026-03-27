@@ -40,8 +40,9 @@ class CrawlTracker:
                 "status": "running",
                 "log_messages": json.dumps([{"time": datetime.now().isoformat(), "event": "🚀 Parallel Pipeline Started"}])
             }
+            headers = {"X-API-Key": os.getenv("INTERNAL_API_KEY", "")}
             async with httpx.AsyncClient() as client:
-                resp = await client.post(f"{self.api_base}/crawl-logs/", json=payload)
+                resp = await client.post(f"{self.api_base}/crawl-logs/", json=payload, headers=headers)
                 if resp.is_success:
                     self.job_id = resp.json().get("id")
                     logger.info(f"📡 Crawl Job Initialized: ID={self.job_id}")
@@ -68,8 +69,9 @@ class CrawlTracker:
                 "total_saved": self.total_saved,
                 "log_messages": json.dumps(self.events)
             }
+            headers = {"X-API-Key": os.getenv("INTERNAL_API_KEY", "")}
             async with httpx.AsyncClient() as client:
-                await client.patch(f"{self.api_base}/crawl-logs/{self.job_id}", json=payload)
+                await client.patch(f"{self.api_base}/crawl-logs/{self.job_id}", json=payload, headers=headers)
             logger.info(f"🏁 Crawl Job Finished: ID={self.job_id} ({status})")
         except Exception as e:
             logger.warning(f"Failed to finish crawl log: {e}")

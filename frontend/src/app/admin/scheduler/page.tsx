@@ -6,6 +6,7 @@ import {
   AlertTriangle, Loader2, Timer, Zap 
 } from "lucide-react";
 import { API_BASE_URL } from "@/config";
+import { triggerPipelineAction, updateIntervalAction } from "./actions";
 
 interface SchedulerStatus {
   is_running: boolean;
@@ -46,13 +47,10 @@ export default function SchedulerPage() {
     setTriggering(true);
     setTriggerMessage("");
     try {
-      const res = await fetch(`${API_BASE_URL}/scheduler/trigger`, { method: "POST" });
-      if (res.ok) {
-        const data = await res.json();
-        setTriggerMessage(data.message);
-      }
-    } catch (e) {
-      setTriggerMessage("Failed to trigger pipeline.");
+      const data = await triggerPipelineAction();
+      setTriggerMessage(data.message);
+    } catch (e: any) {
+      setTriggerMessage(e.message || "Failed to trigger pipeline.");
     } finally {
       setTriggering(false);
       setTimeout(fetchStatus, 2000);
@@ -61,17 +59,11 @@ export default function SchedulerPage() {
 
   const handleIntervalUpdate = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/scheduler/config`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ hours: newInterval })
-      });
-      if (res.ok) {
-        await fetchStatus();
-        setTriggerMessage(`Interval updated to every ${newInterval} hours.`);
-      }
-    } catch (e) {
-      setTriggerMessage("Failed to update interval.");
+      await updateIntervalAction(newInterval);
+      await fetchStatus();
+      setTriggerMessage(`Interval updated to every ${newInterval} hours.`);
+    } catch (e: any) {
+      setTriggerMessage(e.message || "Failed to update interval.");
     }
   };
 

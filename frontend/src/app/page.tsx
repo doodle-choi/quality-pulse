@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { DashboardContainer } from "@/components/dashboard/DashboardContainer";
 import { INTERNAL_API_BASE_URL } from "@/config";
+export const dynamic = "force-dynamic";
 
 // 1. FastAPI 백엔드 연동 (React Server Component)
 async function getIssues() {
