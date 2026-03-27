@@ -2,7 +2,6 @@ import os
 import json
 import logging
 from pydantic import BaseModel, Field
-from typing import List, Optional
 
 logger = logging.getLogger("TriageAgent")
 
@@ -14,13 +13,13 @@ class AnalyzedIssue(BaseModel):
     issue_type: str = Field(..., description="이슈 유형 (Recall, Quality, Safety, Service)")
     description: str = Field(..., description="이슈에 대한 간략한 상세 요약")
     region: str = Field(..., description="영향 지역 (예: USA, Europe, Global)")
-    failed_component: Optional[str] = Field(None, description="문제가 발생한 핵심 부품/소프트웨어 (예: Compressor Relay, Lithium-ion Battery, Door Latch). 불명확하면 null")
-    root_cause: Optional[str] = Field(None, description="근본 원인 기술적 요약 (예: Electrical Short Circuit, Thermal Runaway, Mechanical stress). 불명확하면 null")
+    failed_component: str | None = Field(None, description="문제가 발생한 핵심 부품/소프트웨어 (예: Compressor Relay, Lithium-ion Battery, Door Latch). 불명확하면 null")
+    root_cause: str | None = Field(None, description="근본 원인 기술적 요약 (예: Electrical Short Circuit, Thermal Runaway, Mechanical stress). 불명확하면 null")
     source_url: str = Field(default="N/A", description="출처 URL")
-    published_at: Optional[str] = Field(None, description="이슈의 공식 발표일 또는 발생일 (ISO 형식: YYYY-MM-DD). 본문에 날짜 정보가 없으면 null")
+    published_at: str | None = Field(None, description="이슈의 공식 발표일 또는 발생일 (ISO 형식: YYYY-MM-DD). 본문에 날짜 정보가 없으면 null")
 
 
-async def parse_markdown_with_llm(markdown_content: str, source_url: str = "N/A") -> Optional[List[AnalyzedIssue]]:
+async def parse_markdown_with_llm(markdown_content: str, source_url: str = "N/A") -> list[AnalyzedIssue] | None:
     """
     특정 AI 벤더(OpenAI)에 종속되지 않도록 litellm을 활용하여
     상황과 예산에 맞게 'GPT-4o', 'Claude 3', 'Gemini' 등을 오갈 수 있는 확장형 Triage 구조입니다.

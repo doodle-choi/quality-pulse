@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from typing import List
 
 from db.database import get_db
 from schemas.issue import Issue, IssueCreate
@@ -16,7 +15,7 @@ def create_issue(issue: IssueCreate, db: Session = Depends(get_db)):
     """
     return crud_issue.create_issue(db=db, issue=issue)
 
-@router.get("/", response_model=List[Issue])
+@router.get("/", response_model=list[Issue])
 def read_issues(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     """
     저장된 이슈 목록을 조회합니다. (주로 Frontend Next.js 대시보드가 호출)

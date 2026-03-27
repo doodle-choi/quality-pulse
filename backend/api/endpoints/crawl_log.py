@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from typing import List
 
 from db.database import get_db
 from schemas.crawl_log import CrawlLog, CrawlLogCreate, CrawlLogUpdate
@@ -13,7 +12,7 @@ router = APIRouter()
 def create_log(log: CrawlLogCreate, db: Session = Depends(get_db)):
     return crud_crawl_log.create_crawl_log(db=db, log=log)
 
-@router.get("/", response_model=List[CrawlLog])
+@router.get("/", response_model=list[CrawlLog])
 def read_logs(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return crud_crawl_log.get_crawl_logs(db, skip=skip, limit=limit)
 

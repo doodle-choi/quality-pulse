@@ -1,29 +1,29 @@
-from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional
+
+from pydantic import BaseModel
 
 class CrawlLogBase(BaseModel):
     status: str = "running"
     total_scraped: int = 0
     total_saved: int = 0
-    log_messages: Optional[str] = None
-    summary: Optional[str] = None
+    log_messages: str | None = None
+    summary: str | None = None
 
 class CrawlLogCreate(CrawlLogBase):
     pass
 
 class CrawlLogUpdate(BaseModel):
-    status: Optional[str] = None
-    end_time: Optional[datetime] = None
-    total_scraped: Optional[int] = None
-    total_saved: Optional[int] = None
-    log_messages: Optional[str] = None
-    summary: Optional[str] = None
+    status: str | None = None
+    end_time: datetime | None = None
+    total_scraped: int | None = None
+    total_saved: int | None = None
+    log_messages: str | None = None
+    summary: str | None = None
 
 class CrawlLog(CrawlLogBase):
     id: int
     start_time: datetime
-    end_time: Optional[datetime] = None
+    end_time: datetime | None = None
     created_at: datetime
 
     class Config:

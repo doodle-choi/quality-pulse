@@ -1,19 +1,19 @@
-from pydantic import BaseModel
-from typing import Optional
 from datetime import datetime
+
+from pydantic import BaseModel
 
 class IssueBase(BaseModel):
     title: str
-    description: Optional[str] = None
+    description: str | None = None
     brand: str
     product_category: str
     severity: str
     issue_type: str
     source_url: str
-    region: Optional[str] = None
-    failed_component: Optional[str] = None
-    root_cause: Optional[str] = None
-    published_at: Optional[datetime] = None
+    region: str | None = None
+    failed_component: str | None = None
+    root_cause: str | None = None
+    published_at: datetime | None = None
 
 class IssueCreate(IssueBase):
     pass
@@ -21,7 +21,7 @@ class IssueCreate(IssueBase):
 class Issue(IssueBase):
     id: int
     created_at: datetime
-    updated_at: Optional[datetime] = None
+    updated_at: datetime | None = None
 
     class Config:
         from_attributes = True

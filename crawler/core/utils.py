@@ -2,7 +2,7 @@ import asyncio
 import logging
 import random
 import httpx
-from typing import Any, Dict, Optional
+from typing import Any
 from core.config import INTERNAL_API_KEY, API_BASE_URL
 
 logger = logging.getLogger("CrawlerUtils")
@@ -18,13 +18,13 @@ USER_AGENTS = [
 async def fetch_with_retry(
     url: str,
     method: str = "GET",
-    headers: Optional[Dict[str, str]] = None,
-    json_data: Optional[Dict[str, Any]] = None,
-    params: Optional[Dict[str, Any]] = None,
+    headers: dict[str, str] | None = None,
+    json_data: dict[str, Any] | None = None,
+    params: dict[str, Any] | None = None,
     max_retries: int = 3,
     initial_backoff: float = 1.0,
     timeout: float = 15.0
-) -> Optional[httpx.Response]:
+) -> httpx.Response | None:
     """
     HTTPX를 이용한 비동기 HTTP 요청 유틸리티.
     403/429/500 등의 에러에 대해 지수 백오프(Exponential Backoff) 재시도를 수행합니다.
@@ -80,7 +80,7 @@ async def fetch_with_retry(
     
     return None
 
-async def post_to_backend_async(url: str, payload: Dict[str, Any]) -> bool:
+async def post_to_backend_async(url: str, payload: dict[str, Any]) -> bool:
     """백엔드에 데이터를 비동기로 전송합니다."""
     try:
         resp = await fetch_with_retry(url, method="POST", json_data=payload, max_retries=2)
