@@ -16,6 +16,13 @@ def create_issue(issue: IssueCreate, db: Session = Depends(get_db)):
     """
     return crud_issue.create_issue(db=db, issue=issue)
 
+@router.post("/bulk", response_model=List[Issue], dependencies=[Depends(verify_api_key)])
+def create_issues_bulk(issues: List[IssueCreate], db: Session = Depends(get_db)):
+    """
+    여러 이슈를 한번에 추가합니다.
+    """
+    return crud_issue.create_issues(db=db, issues=issues)
+
 @router.get("/", response_model=List[Issue])
 def read_issues(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     """

@@ -23,3 +23,21 @@ def create_issue(db: Session, issue: IssueCreate):
     db.commit()
     db.refresh(db_issue)
     return db_issue
+
+def create_issues(db: Session, issues: list[IssueCreate]):
+    """
+    여러 이슈를 한번에 추가합니다.
+    """
+    titles = [issue.title for issue in issues]
+    existing_issues = db.query(Issue).filter(Issue.title.in_(titles)).all()
+    existing_titles = {issue.title for issue in existing_issues}
+
+    new_issues = [Issue(**issue.model_dump()) for issue in issues if issue.title not in existing_titles]
+
+    if new_issues:
+        db.add_all(new_issues)
+        db.commit()
+        for issue in new_issues:
+            db.refresh(issue)
+
+    return existing_issues + new_issues

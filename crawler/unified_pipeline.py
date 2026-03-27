@@ -17,6 +17,7 @@ from triage import parse_markdown_with_llm  # noqa: E402
 from core.targets import TARGET_SOURCES, API_SOURCES  # noqa: E402
 from core.dedup import is_content_changed  # noqa: E402
 from core.utils import post_to_backend_async  # noqa: E402
+from core.config import INTERNAL_API_KEY  # noqa: E402
 from datetime import datetime  # noqa: E402
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -40,11 +41,14 @@ class CrawlTracker:
                 "status": "running",
                 "log_messages": json.dumps([{"time": datetime.now().isoformat(), "event": "🚀 Parallel Pipeline Started"}])
             }
+            headers = {"X-API-Key": INTERNAL_API_KEY} if INTERNAL_API_KEY else {}
             async with httpx.AsyncClient() as client:
-                resp = await client.post(f"{self.api_base}/crawl-logs/", json=payload)
+                resp = await client.post(f"{self.api_base}/crawl-logs/", json=payload, headers=headers)
                 if resp.is_success:
                     self.job_id = resp.json().get("id")
                     logger.info(f"📡 Crawl Job Initialized: ID={self.job_id}")
+                else:
+                    logger.warning(f"Failed to init crawl log. Status: {resp.status_code}, Body: {resp.text}")
         except Exception as e:
             logger.warning(f"Failed to init crawl log: {e}")
 
@@ -68,8 +72,11 @@ class CrawlTracker:
                 "total_saved": self.total_saved,
                 "log_messages": json.dumps(self.events)
             }
+            headers = {"X-API-Key": INTERNAL_API_KEY} if INTERNAL_API_KEY else {}
             async with httpx.AsyncClient() as client:
-                await client.patch(f"{self.api_base}/crawl-logs/{self.job_id}", json=payload)
+                resp = await client.patch(f"{self.api_base}/crawl-logs/{self.job_id}", json=payload, headers=headers)
+                if not resp.is_success:
+                    logger.warning(f"Failed to finish crawl log. Status: {resp.status_code}, Body: {resp.text}")
             logger.info(f"🏁 Crawl Job Finished: ID={self.job_id} ({status})")
         except Exception as e:
             logger.warning(f"Failed to finish crawl log: {e}")
@@ -175,15 +182,18 @@ async def run_unified_pipeline():
         tracker.update_stats(scraped=len(all_issues))
 
         if all_issues:
-            tracker.log(f"Syncing {len(all_issues)} issues to database...")
-            api_url = os.getenv("API_BASE_URL", "http://localhost:8000/api/v1") + "/issues/"
+            tracker.log(f"Syncing {len(all_issues)} issues to database (bulk)...")
+            api_url = os.getenv("API_BASE_URL", "http://localhost:8000/api/v1") + "/issues/bulk"
             
-            sync_tasks = [post_to_backend_async(api_url, issue.model_dump()) for issue in all_issues]
-            sync_results = await asyncio.gather(*sync_tasks)
+            # Use post_to_backend_async for bulk insertion
+            payload = [issue.model_dump() for issue in all_issues]
+            success = await post_to_backend_async(api_url, payload)
             
-            success_count = sum(1 for r in sync_results if r)
-            tracker.log(f"✅ Successfully saved {success_count}/{len(all_issues)} issues.")
-            tracker.update_stats(saved=success_count)
+            if success:
+                tracker.log(f"✅ Successfully saved {len(all_issues)} issues.")
+                tracker.update_stats(saved=len(all_issues))
+            else:
+                tracker.log("❌ Failed to save issues.")
         else:
             tracker.log("No new unique issues discovered.")
 
