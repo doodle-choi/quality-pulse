@@ -49,8 +49,8 @@ export default function SchedulerPage() {
     try {
       const data = await triggerPipelineAction();
       setTriggerMessage(data.message);
-    } catch (e: any) {
-      setTriggerMessage(e.message || "Failed to trigger pipeline.");
+    } catch (e: unknown) {
+      setTriggerMessage(e instanceof Error ? e.message : "Failed to trigger pipeline.");
     } finally {
       setTriggering(false);
       setTimeout(fetchStatus, 2000);
@@ -62,8 +62,8 @@ export default function SchedulerPage() {
       await updateIntervalAction(newInterval);
       await fetchStatus();
       setTriggerMessage(`Interval updated to every ${newInterval} hours.`);
-    } catch (e: any) {
-      setTriggerMessage(e.message || "Failed to update interval.");
+    } catch (e: unknown) {
+      setTriggerMessage(e instanceof Error ? e.message : "Failed to update interval.");
     }
   };
 

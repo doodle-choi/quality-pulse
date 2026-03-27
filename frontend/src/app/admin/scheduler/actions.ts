@@ -19,9 +19,12 @@ export async function triggerPipelineAction() {
     }
 
     return await res.json();
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Trigger Action Error:", error);
-    throw new Error(error.message || "Failed to trigger pipeline.");
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+    throw new Error("Failed to trigger pipeline.");
   }
 }
 
@@ -42,8 +45,11 @@ export async function updateIntervalAction(hours: number) {
     }
 
     return await res.json();
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Update Interval Action Error:", error);
-    throw new Error(error.message || "Failed to update interval.");
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+    throw new Error("Failed to update interval.");
   }
 }

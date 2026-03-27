@@ -43,6 +43,21 @@ export function IssueCard({ issue }: { issue: IssueAttr }) {
     setMounted(true);
   }, []);
 
+  // SECURITY: Sanitize URL to prevent XSS via javascript: or data: URIs
+  const sanitizeUrl = (url: string) => {
+    if (!url) return "#";
+    try {
+      const parsed = new URL(url);
+      if (parsed.protocol === "http:" || parsed.protocol === "https:") {
+        return url;
+      }
+      return "#";
+    } catch {
+      // If URL parsing fails, fallback to #
+      return "#";
+    }
+  };
+
   const brandLower = issue.brand?.toLowerCase() || "";
   let brandColorClass = "bg-surface-alt border border-border text-text-secondary";
   
@@ -123,7 +138,7 @@ export function IssueCard({ issue }: { issue: IssueAttr }) {
             {issue.description}
           </p>
           <a 
-            href={issue.source_url} 
+            href={sanitizeUrl(issue.source_url)}
             target="_blank" 
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1 text-[12px] text-primary font-medium hover:underline bg-primary/5 px-2.5 py-1 rounded-md border border-primary/10"
