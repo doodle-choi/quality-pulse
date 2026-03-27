@@ -15,6 +15,22 @@ const REGION_MAPPING: Record<string, string[]> = {
   "Europe": ["United Kingdom", "Germany", "France", "Italy", "Spain", "Poland", "Netherlands", "Sweden", "Norway"],
 };
 
+// ⚡ Bolt: Pre-calculate O(1) hash map lookup for regions instead of O(N) array scans
+const COUNTRY_TO_REGION = Object.entries(REGION_MAPPING).reduce((acc, [region, countries]) => {
+  countries.forEach(country => {
+    acc[country] = region;
+  });
+  return acc;
+}, {} as Record<string, string>);
+
+// ⚡ Bolt: Pre-calculate O(1) severity weights instead of recreating arrays and using .indexOf() in loops
+const SEVERITY_WEIGHT: Record<string, number> = {
+  Low: 0,
+  Medium: 1,
+  High: 2,
+  Critical: 3,
+};
+
 const COLORS = {
   critical: "var(--critical)",
   high: "var(--high)",
@@ -35,7 +51,6 @@ interface WorldMapProps {
 export function WorldMap({ issues, selectedRegion, onRegionClick }: WorldMapProps) {
   const regionStats = useMemo(() => {
     const stats: Record<string, { count: number, severity: string }> = {};
-    const sevLevels = ["Low", "Medium", "High", "Critical"];
 
     issues.forEach(issue => {
       const region = issue.region || "Global";
@@ -44,7 +59,8 @@ export function WorldMap({ issues, selectedRegion, onRegionClick }: WorldMapProp
       }
       stats[region].count += 1;
 
-      if (sevLevels.indexOf(issue.severity) > sevLevels.indexOf(stats[region].severity)) {
+      // ⚡ Bolt: Replaced O(N) .indexOf() lookup with O(1) map
+      if ((SEVERITY_WEIGHT[issue.severity] ?? -1) > (SEVERITY_WEIGHT[stats[region].severity] ?? -1)) {
         stats[region].severity = issue.severity;
       }
     });
@@ -53,12 +69,8 @@ export function WorldMap({ issues, selectedRegion, onRegionClick }: WorldMapProp
   }, [issues]);
 
   const getRegionFromGeoName = (geoName: string) => {
-    for (const [region, countries] of Object.entries(REGION_MAPPING)) {
-      if (countries.includes(geoName)) {
-        return region;
-      }
-    }
-    return null;
+    // ⚡ Bolt: Replaced O(N) loop with O(1) property lookup
+    return COUNTRY_TO_REGION[geoName] || null;
   };
 
   return (
