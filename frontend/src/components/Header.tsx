@@ -37,6 +37,7 @@ export function Header() {
             aria-label="Toggle mobile menu"
             className="md:hidden text-text-secondary hover:text-text p-1 -ml-1 rounded-md active:bg-surface-alt"
             onClick={toggleMobile}
+            aria-label="Toggle mobile menu"
           >
             <Menu size={20} />
           </button>
@@ -64,6 +65,7 @@ export function Header() {
             aria-label="Toggle theme"
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
             className="flex items-center gap-2 bg-surface text-text font-bold border border-border hover:border-primary px-3 py-1.5 rounded-lg text-xs transition-all shadow-sm active:scale-95"
+            aria-label="Toggle theme"
           >
             {mounted && theme === "dark" ? <Sun size={14} className="text-amber-500" /> : <Moon size={14} className="text-indigo-500" />}
             <span className="hidden sm:inline">{mounted && theme === "dark" ? "Light" : "Dark"}</span>

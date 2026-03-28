@@ -94,6 +94,7 @@ export function ComponentMatrix({ issues, onComponentClick, selectedComponent }:
               key={comp.name}
               onClick={() => onComponentClick(isSelected ? "" : comp.name)}
               className={`text-left p-3 rounded-lg border transition-all duration-200 group flex flex-col justify-between h-full min-h-[80px] ${getSeverityColors(comp.severity, isSelected)}`}
+              aria-label={`Filter by component ${comp.name}, ${comp.count} issues`}
             >
               <div className="flex justify-between items-start gap-2 mb-2">
                 <span className="text-[12px] font-bold leading-tight line-clamp-2">
