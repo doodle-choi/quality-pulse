@@ -15,6 +15,22 @@ const REGION_MAPPING: Record<string, string[]> = {
   "Europe": ["United Kingdom", "Germany", "France", "Italy", "Spain", "Poland", "Netherlands", "Sweden", "Norway"],
 };
 
+// Invert REGION_MAPPING for O(1) lookups
+const GEO_TO_REGION: Record<string, string> = {};
+for (const [region, countries] of Object.entries(REGION_MAPPING)) {
+  for (const country of countries) {
+    GEO_TO_REGION[country] = region;
+  }
+}
+
+// O(1) severity rank lookup
+const SEVERITY_RANK: Record<string, number> = {
+  "Low": 0,
+  "Medium": 1,
+  "High": 2,
+  "Critical": 3
+};
+
 const COLORS = {
   critical: "var(--critical)",
   high: "var(--high)",
@@ -35,7 +51,6 @@ interface WorldMapProps {
 export function WorldMap({ issues, selectedRegion, onRegionClick }: WorldMapProps) {
   const regionStats = useMemo(() => {
     const stats: Record<string, { count: number, severity: string }> = {};
-    const sevLevels = ["Low", "Medium", "High", "Critical"];
 
     issues.forEach(issue => {
       const region = issue.region || "Global";
@@ -44,7 +59,7 @@ export function WorldMap({ issues, selectedRegion, onRegionClick }: WorldMapProp
       }
       stats[region].count += 1;
 
-      if (sevLevels.indexOf(issue.severity) > sevLevels.indexOf(stats[region].severity)) {
+      if (SEVERITY_RANK[issue.severity] > SEVERITY_RANK[stats[region].severity]) {
         stats[region].severity = issue.severity;
       }
     });
@@ -53,12 +68,7 @@ export function WorldMap({ issues, selectedRegion, onRegionClick }: WorldMapProp
   }, [issues]);
 
   const getRegionFromGeoName = (geoName: string) => {
-    for (const [region, countries] of Object.entries(REGION_MAPPING)) {
-      if (countries.includes(geoName)) {
-        return region;
-      }
-    }
-    return null;
+    return GEO_TO_REGION[geoName] || null;
   };
 
   return (

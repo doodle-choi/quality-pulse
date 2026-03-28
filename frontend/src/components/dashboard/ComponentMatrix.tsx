@@ -9,6 +9,14 @@ interface ComponentMatrixProps {
   selectedComponent: string;
 }
 
+// O(1) severity rank lookup outside component
+const SEVERITY_RANK: Record<string, number> = {
+  "Low": 0,
+  "Medium": 1,
+  "High": 2,
+  "Critical": 3
+};
+
 export function ComponentMatrix({ issues, onComponentClick, selectedComponent }: ComponentMatrixProps) {
   // Aggregate issues by failed_component
   const componentStats = useMemo(() => {
@@ -25,8 +33,7 @@ export function ComponentMatrix({ issues, onComponentClick, selectedComponent }:
       stats[comp].count += 1;
       stats[comp].categories.add(issue.product_category);
       
-      const sevLevels = ["Low", "Medium", "High", "Critical"];
-      if (sevLevels.indexOf(issue.severity) > sevLevels.indexOf(stats[comp].severity)) {
+      if (SEVERITY_RANK[issue.severity] > SEVERITY_RANK[stats[comp].severity]) {
         stats[comp].severity = issue.severity;
       }
     });
