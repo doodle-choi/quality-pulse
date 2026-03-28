@@ -7,68 +7,63 @@ import { IssueAttr } from "@/components/dashboard/IssueCard";
 import { AutoRefresh } from "@/components/AutoRefresh";
 
 export function DashboardContainer({ initialIssues }: { initialIssues: IssueAttr[] }) {
-  // Risk Chart data calculation
-  const riskData = useMemo(() => {
-    const counts = {
-      Critical: initialIssues.filter(i => i.severity === "Critical").length,
-      High: initialIssues.filter(i => i.severity === "High").length,
-      Medium: initialIssues.filter(i => i.severity === "Medium").length,
-      Low: initialIssues.filter(i => i.severity === "Low").length,
+  // ⚡ Bolt: Single O(N) pass to calculate riskData, timelineData, and kpiStats
+  // Prevents ~14 redundant array traversals and costly string splits per render
+  const { riskData, timelineData, kpiStats } = useMemo(() => {
+    const riskCounts = { Critical: 0, High: 0, Medium: 0, Low: 0 };
+
+    // Pre-calculate the last 7 days for O(1) timeline lookup map
+    const last7DaysMap: Record<string, number> = {};
+    const d = new Date();
+    for (let i = 6; i >= 0; i--) {
+      const dateStr = new Date(d.getTime() - i * 86400000).toISOString().slice(0, 10);
+      last7DaysMap[dateStr] = 0;
+    }
+
+    let kpiCritical = 0;
+    let kpiRecall = 0;
+    let kpiSafety = 0;
+
+    // Single pass over initialIssues
+    for (const issue of initialIssues) {
+      // 1. Risk Data
+      if (issue.severity in riskCounts) {
+        riskCounts[issue.severity as keyof typeof riskCounts]++;
+      }
+
+      // 2. Timeline Data (avoiding .split() by using .slice())
+      const issueDateRaw = issue.published_at || issue.created_at;
+      const issueDateStr = issueDateRaw ? issueDateRaw.slice(0, 10) : "";
+      if (issueDateStr in last7DaysMap) {
+        last7DaysMap[issueDateStr]++;
+      }
+
+      // 3. KPI Data
+      if (issue.severity === "Critical") kpiCritical++;
+      if (issue.issue_type.includes("Recall")) kpiRecall++;
+      if (issue.issue_type.includes("Safety")) kpiSafety++;
+    }
+
+    return {
+      riskData: [
+        { name: "Critical Hazards", value: riskCounts.Critical, color: "var(--critical)" },
+        { name: "High Risks", value: riskCounts.High, color: "var(--high)" },
+        { name: "Medium Quality", value: riskCounts.Medium, color: "var(--medium)" },
+        { name: "Low/Monitoring", value: riskCounts.Low, color: "var(--low)" },
+      ].filter(d => d.value > 0),
+
+      timelineData: Object.entries(last7DaysMap).map(([date, count]) => ({
+        date: date.slice(5), // MM-DD format
+        count,
+      })),
+
+      kpiStats: [
+        { label: "Total Monitored Issues", value: initialIssues.length, color: "text-text", sub: "Across all global sources" },
+        { label: "Critical Risks", value: kpiCritical, color: "text-critical", sub: "Immediate response needed" },
+        { label: "Recalls Detected", value: kpiRecall, color: "text-primary", sub: "Official safety recalls" },
+        { label: "Safety Hazards", value: kpiSafety, color: "text-high", sub: "Potential risks identified" },
+      ]
     };
-
-    return [
-      { name: "Critical Hazards", value: counts.Critical, color: "var(--critical)" },
-      { name: "High Risks", value: counts.High, color: "var(--high)" },
-      { name: "Medium Quality", value: counts.Medium, color: "var(--medium)" },
-      { name: "Low/Monitoring", value: counts.Low, color: "var(--low)" },
-    ].filter(d => d.value > 0);
-  }, [initialIssues]);
-
-  // Timeline data calculation (recent 7 days)
-  const timelineData = useMemo(() => {
-    const last7Days = Array.from({ length: 7 }, (_, i) => {
-      const d = new Date();
-      d.setDate(d.getDate() - (6 - i));
-      return d.toISOString().split("T")[0];
-    });
-
-    return last7Days.map(date => {
-      const count = initialIssues.filter(i => {
-        const compareDate = i.published_at ? i.published_at.split("T")[0] : i.created_at.split("T")[0];
-        return compareDate === date;
-      }).length;
-      return { date: date.slice(5), count }; // MM-DD format
-    });
-  }, [initialIssues]);
-
-  // Real-time KPI calculation
-  const kpiStats = useMemo(() => {
-    return [
-      { 
-        label: "Total Monitored Issues", 
-        value: initialIssues.length, 
-        color: "text-text", 
-        sub: "Across all global sources" 
-      },
-      { 
-        label: "Critical Risks", 
-        value: initialIssues.filter(i => i.severity === "Critical").length, 
-        color: "text-critical", 
-        sub: "Immediate response needed" 
-      },
-      { 
-        label: "Recalls Detected", 
-        value: initialIssues.filter(i => i.issue_type.includes("Recall")).length, 
-        color: "text-primary", 
-        sub: "Official safety recalls" 
-      },
-      { 
-        label: "Safety Hazards", 
-        value: initialIssues.filter(i => i.issue_type.includes("Safety")).length, 
-        color: "text-high", 
-        sub: "Potential risks identified" 
-      },
-    ];
   }, [initialIssues]);
 
   return (
