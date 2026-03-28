@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import { IssueAttr } from "@/components/dashboard/IssueCard";
 import { INTERNAL_API_BASE_URL } from "@/config";
 

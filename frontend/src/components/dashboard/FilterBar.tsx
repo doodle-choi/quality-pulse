@@ -51,11 +51,13 @@ export function FilterBar({
             className="w-full bg-surface-alt border border-border rounded-lg pl-10 pr-4 py-2 text-sm text-text focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            aria-label="Search queries"
           />
           {searchQuery && (
             <button 
               onClick={() => setSearchQuery("")}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text"
+              aria-label="Clear search"
             >
               <X size={14} />
             </button>
@@ -73,6 +75,7 @@ export function FilterBar({
             className="bg-surface-alt border border-border rounded-lg px-3 py-1.5 text-xs font-medium text-text-secondary focus:outline-none focus:border-primary cursor-pointer hover:border-text-muted transition-colors"
             value={selectedRegion}
             onChange={(e) => setSelectedRegion(e.target.value)}
+            aria-label="Filter by region"
           >
             <option value="">All Regions</option>
             {regions.map(r => <option key={r} value={r}>{r}</option>)}
@@ -82,6 +85,7 @@ export function FilterBar({
             className="bg-surface-alt border border-border rounded-lg px-3 py-1.5 text-xs font-medium text-text-secondary focus:outline-none focus:border-primary cursor-pointer hover:border-text-muted transition-colors"
             value={selectedBrand}
             onChange={(e) => setSelectedBrand(e.target.value)}
+            aria-label="Filter by brand"
           >
             <option value="">All Brands</option>
             {brands.map(b => <option key={b} value={b}>{b}</option>)}
@@ -91,6 +95,7 @@ export function FilterBar({
             className="bg-surface-alt border border-border rounded-lg px-3 py-1.5 text-xs font-medium text-text-secondary focus:outline-none focus:border-primary cursor-pointer hover:border-text-muted transition-colors"
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
+            aria-label="Filter by category"
           >
             <option value="">All Categories</option>
             {categories.map(c => <option key={c} value={c}>{c}</option>)}
@@ -100,6 +105,7 @@ export function FilterBar({
             className="bg-surface-alt border border-border rounded-lg px-3 py-1.5 text-xs font-medium text-text-secondary focus:outline-none focus:border-primary cursor-pointer hover:border-text-muted transition-colors"
             value={selectedSeverity}
             onChange={(e) => setSelectedSeverity(e.target.value)}
+            aria-label="Filter by severity"
           >
             <option value="">All Severities</option>
             {severities.map(s => <option key={s} value={s}>{s}</option>)}
@@ -111,6 +117,7 @@ export function FilterBar({
             className="bg-surface-alt border border-border rounded-lg px-3 py-1.5 text-xs font-bold text-primary focus:outline-none focus:border-primary cursor-pointer hover:border-primary/50 transition-colors"
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
+            aria-label="Sort issues by"
           >
             <option value="newest">Newest Discovery</option>
             <option value="published">Published Date</option>
