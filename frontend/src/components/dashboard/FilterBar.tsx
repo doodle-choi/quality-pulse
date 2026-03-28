@@ -58,8 +58,7 @@ export function FilterBar({
               aria-label="Clear search query"
               onClick={() => setSearchQuery("")}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text"
-              aria-label="Clear search"
-            >
+              >
               <X size={14} />
             </button>
           )}
