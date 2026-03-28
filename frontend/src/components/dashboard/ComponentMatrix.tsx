@@ -9,6 +9,14 @@ interface ComponentMatrixProps {
   selectedComponent: string;
 }
 
+// ⚡ Bolt: Pre-calculate O(1) severity weights instead of recreating arrays and using .indexOf() in loops
+const SEVERITY_WEIGHT: Record<string, number> = {
+  Low: 0,
+  Medium: 1,
+  High: 2,
+  Critical: 3,
+};
+
 export function ComponentMatrix({ issues, onComponentClick, selectedComponent }: ComponentMatrixProps) {
   // Aggregate issues by failed_component
   const componentStats = useMemo(() => {
@@ -25,8 +33,8 @@ export function ComponentMatrix({ issues, onComponentClick, selectedComponent }:
       stats[comp].count += 1;
       stats[comp].categories.add(issue.product_category);
       
-      const sevLevels = ["Low", "Medium", "High", "Critical"];
-      if (sevLevels.indexOf(issue.severity) > sevLevels.indexOf(stats[comp].severity)) {
+      // ⚡ Bolt: Replaced O(N) .indexOf() lookup with O(1) map
+      if ((SEVERITY_WEIGHT[issue.severity] ?? -1) > (SEVERITY_WEIGHT[stats[comp].severity] ?? -1)) {
         stats[comp].severity = issue.severity;
       }
     });
