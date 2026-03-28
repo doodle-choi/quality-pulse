@@ -68,7 +68,6 @@ export function Sidebar() {
             aria-label="Close mobile sidebar"
             className="md:hidden text-text-muted hover:text-text p-1 rounded-md active:bg-surface-alt"
             onClick={() => setIsMobileOpen(false)}
-            aria-label="Close sidebar"
           >
             <X size={18} />
           </button>

@@ -43,6 +43,13 @@ export function IssueCard({ issue }: { issue: IssueAttr }) {
     setMounted(true);
   }, []);
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      setExpanded(!expanded);
+    }
+  };
+
   const brandLower = issue.brand?.toLowerCase() || "";
   let brandColorClass = "bg-surface-alt border border-border text-text-secondary";
   
@@ -52,11 +59,16 @@ export function IssueCard({ issue }: { issue: IssueAttr }) {
 
   return (
     <div 
+      role="button"
+      tabIndex={0}
+      aria-expanded={expanded}
+      aria-controls={`issue-content-${issue.id}`}
       className={clsx(
-        "bg-surface border border-border rounded-xl overflow-hidden shadow-sm transition-all duration-200 hover:shadow-md cursor-pointer",
+        "bg-surface border border-border rounded-xl overflow-hidden shadow-sm transition-all duration-200 hover:shadow-md cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none",
         severityBorderMap[issue.severity] || "border-l-4 border-l-border"
       )}
       onClick={() => setExpanded(!expanded)}
+      onKeyDown={handleKeyDown}
     >
       <div className="p-4 flex flex-col gap-2.5">
         <div className="flex items-center gap-2 flex-wrap">
@@ -118,7 +130,7 @@ export function IssueCard({ issue }: { issue: IssueAttr }) {
       </div>
 
       {expanded && (
-        <div className="px-4 pb-4 pt-2 border-t border-border-light bg-surface-alt/30">
+        <div id={`issue-content-${issue.id}`} className="px-4 pb-4 pt-2 border-t border-border-light bg-surface-alt/30">
           <p className="text-[13.5px] leading-relaxed text-text-secondary mb-3">
             {issue.description}
           </p>

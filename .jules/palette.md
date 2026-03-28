@@ -1,3 +1,6 @@
 ## 2024-03-27 - Icon-Only Button Accessibility in Dashboard Components
 **Learning:** Several key layout and dashboard components (Header, Sidebar, FilterBar) rely heavily on icon-only buttons (like Menu, X, Sun/Moon) from `lucide-react` without native text labels or `aria-label`s, rendering them inaccessible to screen readers. This pattern is common across the app's interactive elements.
 **Action:** When working with or adding new `lucide-react` icon buttons, always verify and include a descriptive `aria-label` attribute if there is no visible accompanying text.
+## 2024-03-28 - IssueCard Keyboard Accessibility & Screen Reader Support
+**Learning:** The `IssueCard` components function as interactive expandable items. By default, using a `div` with an `onClick` handler ignores keyboard users (cannot focus via `Tab` or activate via `Enter`/`Space`) and screen readers (no semantics or state conveyed).
+**Action:** When implementing interactive card-like components, always ensure to assign `role="button"`, add `tabIndex={0}`, handle `onKeyDown` for activation, clearly denote the state using `aria-expanded`, specify the controlled region with `aria-controls`, and include a clear visual focus indicator such as `focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none`.
