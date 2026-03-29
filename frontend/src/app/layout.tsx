@@ -1,3 +1,4 @@
+import I18nProvider from "@/components/I18nProvider";
 import type { Metadata } from "next";
 import { Inter, Manrope } from "next/font/google";
 import "./globals.css";
@@ -39,6 +40,7 @@ export default function RootLayout({
         />
       </head>
       <body className={`${inter.variable} ${manrope.variable} antialiased font-sans min-h-screen bg-surface text-text selection:bg-primary/30`}>
+        <I18nProvider>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
@@ -62,6 +64,7 @@ export default function RootLayout({
             <div className="fixed bottom-0 left-64 w-[300px] h-[300px] bg-primary/5 rounded-full blur-[100px] -z-10 pointer-events-none" />
           </SidebarProvider>
         </ThemeProvider>
+        </I18nProvider>
       </body>
     </html>
   );

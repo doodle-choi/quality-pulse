@@ -14,7 +14,9 @@ import {
   MOCK_EVENTS,
 } from "@/shared/mockData";
 
+import { useTranslation } from "react-i18next";
 export function DashboardContainer({ initialIssues }: { initialIssues: IssueAttr[] }) {
+  const { t } = useTranslation();
   const hasData = initialIssues && initialIssues.length > 0;
 
   const riskData = useMemo(() => {
@@ -54,17 +56,17 @@ export function DashboardContainer({ initialIssues }: { initialIssues: IssueAttr
             Performance Ecosystem
           </h1>
           <p className="text-text-muted font-medium text-sm mt-1">
-            Real-time analytical layer for quality intelligence
+            Real-time analytical layer for {t("dashboard.quality intelligence", "quality intelligence")}
           </p>
         </div>
         <div className="flex items-center gap-3 bg-surface-low dark:bg-surface-low p-1.5 rounded-xl">
-          <button className="px-4 py-2 bg-white dark:bg-surface-high shadow-sm rounded-lg text-xs font-bold text-text">Last 30 Days</button>
-          <button className="px-4 py-2 text-xs font-bold text-slate-500 hover:text-slate-700 dark:hover:text-white transition-colors">Quarterly</button>
-          <button className="px-4 py-2 text-xs font-bold text-slate-500 hover:text-slate-700 dark:hover:text-white transition-colors">Yearly</button>
+          <button className="px-4 py-2 bg-white dark:bg-surface-high shadow-sm rounded-lg text-xs font-bold text-text">{t("dashboard.Last 30 Days", "Last 30 Days")}</button>
+          <button className="px-4 py-2 text-xs font-bold text-slate-500 hover:text-slate-700 dark:hover:text-white transition-colors">{t("dashboard.Quarterly", "Quarterly")}</button>
+          <button className="px-4 py-2 text-xs font-bold text-slate-500 hover:text-slate-700 dark:hover:text-white transition-colors">{t("dashboard.Yearly", "Yearly")}</button>
           <div className="w-px h-6 bg-slate-300 dark:bg-outline-variant mx-1" />
           <button className="flex items-center gap-2 px-4 py-2 bg-primary text-on-primary rounded-lg text-xs font-bold active:scale-95 transition-transform">
             <MaterialIcon name="calendar_today" size="sm" />
-            Custom Range
+            {t("dashboard.Custom Range", "Custom Range")}
           </button>
         </div>
       </div>
@@ -114,17 +116,17 @@ export function DashboardContainer({ initialIssues }: { initialIssues: IssueAttr
         <div className="col-span-12 lg:col-span-8 bg-surface-lowest dark:bg-surface-container rounded-xl p-6 md:p-8 shadow-sm">
           <div className="flex justify-between items-center mb-6">
             <div>
-              <h3 className="font-bold text-text font-headline">Analytical Trajectory</h3>
-              <p className="text-xs text-slate-500 dark:text-text-muted mt-0.5">7-day volume trend cross-referenced globally</p>
+              <h3 className="font-bold text-text font-headline">{t("dashboard.Analytical Trajectory", "Analytical Trajectory")}</h3>
+              <p className="text-xs text-slate-500 dark:text-text-muted mt-0.5">{t("dashboard.7-day volume trend", "7-day volume trend cross-referenced globally")}</p>
             </div>
             <div className="flex items-center gap-6">
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full bg-primary" />
-                <span className="text-[10px] font-bold text-slate-500 dark:text-text-muted uppercase">Current</span>
+                <span className="text-[10px] font-bold text-slate-500 dark:text-text-muted uppercase">{t("dashboard.Current", "Current")}</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full bg-slate-200 dark:bg-outline-variant" />
-                <span className="text-[10px] font-bold text-slate-500 dark:text-text-muted uppercase">Previous</span>
+                <span className="text-[10px] font-bold text-slate-500 dark:text-text-muted uppercase">{t("dashboard.Previous", "Previous")}</span>
               </div>
             </div>
           </div>
@@ -137,20 +139,20 @@ export function DashboardContainer({ initialIssues }: { initialIssues: IssueAttr
         <div className="col-span-12 lg:col-span-4 flex flex-col gap-6">
           {/* Donut Risk Chart */}
           <div className="bg-surface-low dark:bg-surface-low rounded-xl p-6 flex-1 flex flex-col items-center justify-center text-center">
-            <h3 className="font-bold text-text font-headline mb-4">Severity Distribution</h3>
+            <h3 className="font-bold text-text font-headline mb-4">{t("dashboard.Severity Distribution", "Severity Distribution")}</h3>
             <div className="w-full h-52">
               <RiskChart data={riskData} />
             </div>
           </div>
 
-          {/* Active Insight Card (Dark accent) */}
+          {/* {t("dashboard.Active Insight", "Active Insight")} Card (Dark accent) */}
           <div className="bg-primary-container rounded-xl p-6 text-white overflow-hidden relative">
             <div className="relative z-10">
-              <p className="text-xs font-bold text-slate-400 mb-1 uppercase tracking-widest">Active Insight</p>
-              <h4 className="text-lg font-bold mb-4 font-headline">Issue volume increased by 14% this morning.</h4>
+              <p className="text-xs font-bold text-slate-400 mb-1 uppercase tracking-widest">{t("dashboard.Active Insight", "Active Insight")}</p>
+              <h4 className="text-lg font-bold mb-4 font-headline">{t("dashboard.Issue volume increased", "Issue volume increased by 14% this morning.")}</h4>
               <div className="flex items-center gap-2">
                 <MaterialIcon name="flash_on" className="text-tertiary-fixed" size="sm" />
-                <span className="text-xs font-medium text-slate-300">Investigation recommended.</span>
+                <span className="text-xs font-medium text-slate-300">{t("dashboard.Investigation recommended", "Investigation recommended.")}</span>
               </div>
             </div>
             {/* Decorative glow */}
@@ -163,7 +165,7 @@ export function DashboardContainer({ initialIssues }: { initialIssues: IssueAttr
       <div className="grid grid-cols-12 gap-6">
         {/* Regional Distribution */}
         <div className="col-span-12 lg:col-span-4 bg-surface-lowest dark:bg-surface-container rounded-xl p-6 shadow-sm">
-          <h3 className="font-bold text-text font-headline mb-6">Regional Distribution</h3>
+          <h3 className="font-bold text-text font-headline mb-6">{t("dashboard.Regional Distribution", "Regional Distribution")}</h3>
           <div className="space-y-4">
             {MOCK_REGIONAL_DATA.map((r) => (
               <div key={r.region} className="flex items-center gap-4">
@@ -180,10 +182,10 @@ export function DashboardContainer({ initialIssues }: { initialIssues: IssueAttr
         {/* Recent Events List */}
         <div className="col-span-12 lg:col-span-8 bg-surface-lowest dark:bg-surface-container rounded-xl shadow-sm overflow-hidden">
           <div className="p-6 border-b border-slate-100 dark:border-outline-variant/10 flex justify-between items-center">
-            <h3 className="font-bold text-text font-headline">Recent Quality Events</h3>
+            <h3 className="font-bold text-text font-headline">{t("dashboard.Recent Quality Events", "Recent Quality Events")}</h3>
             <button className="text-xs font-bold text-slate-500 dark:text-text-muted hover:text-slate-900 dark:hover:text-white flex items-center gap-1 transition-colors">
               <MaterialIcon name="filter_list" size="sm" />
-              Filter
+              {t("dashboard.Filter", "Filter")}
             </button>
           </div>
           <div className="divide-y divide-slate-50 dark:divide-outline-variant/5">
