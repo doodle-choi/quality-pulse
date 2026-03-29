@@ -34,7 +34,7 @@ const SEVERITY_WEIGHT: Record<string, number> = {
 const COLORS = {
   critical: "var(--critical)",
   high: "var(--high)",
-  medium: "var(--primary)",
+  medium: "var(--medium)",
   low: "var(--low)",
   default: "var(--surface-alt)",
   hover: "var(--primary)",
@@ -137,7 +137,20 @@ export function WorldMap({ issues, selectedRegion, onRegionClick }: WorldMapProp
                         onRegionClick(selectedRegion === region ? "" : region);
                       }
                     }}
-                  />
+                  >
+                    {stats && (stats.severity === "Critical" || stats.severity === "High") && (
+                      <circle
+                        cx={0}
+                        cy={0}
+                        r={stats.severity === "Critical" ? 3.5 : 2.5}
+                        fill={stats.severity === "Critical" ? COLORS.critical : COLORS.high}
+                        stroke={COLORS.default}
+                        strokeWidth={0.5}
+                        className="animate-pulse"
+                        style={{ pointerEvents: "none", filter: "blur(0.5px)" }}
+                      />
+                    )}
+                  </Geography>
                 );
               })
             }
