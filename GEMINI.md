@@ -12,7 +12,7 @@ The system operates on a "Two-Track" intelligence gathering model:
 1.  **Crawl:** Scheduled workers (Celery) trigger scrapers to fetch data.
 2.  **Triage:** Gemini LLM analyzes the raw content to identify specific issues, assigning severity, category, and brand.
 3.  **Sync:** Structured data is stored in PostgreSQL via a FastAPI backend.
-4.  **Visualize:** A Next.js dashboard provides a real-time feed, risk charts, and timeline views of detected issues.
+4.  **Visualize:** A Next.js dashboard provides a real-time feed, risk charts, and timeline views. **Force-dynamic** rendering ensures data freshness on every visit.
 
 ---
 
@@ -35,6 +35,7 @@ The system operates on a "Two-Track" intelligence gathering model:
 | **Database** | PostgreSQL 16 |
 | **Cache/Queue** | Redis 7.2, Celery |
 | **AI/LLM** | Google Gemini (GenAI SDK) |
+| **Development** | Antigravity, Stitch, Gemini CLI, Jules |
 | **Infrastructure** | Docker, Docker Compose, Nginx |
 
 ---
@@ -51,9 +52,10 @@ The system operates on a "Two-Track" intelligence gathering model:
 2.  **Configure environment variables**:
     Create a `.env` file in the root (see `docker-compose.yml` for required keys):
     ```bash
-    POSTGRES_PASSWORD=your_secure_password
-    REDIS_PASSWORD=your_secure_password
+    POSTGRES_PASSWORD="your_secure_password" # Use quotes for special characters like #
+    REDIS_PASSWORD="your_secure_password"
     GEMINI_API_KEY=your_gemini_api_key
+    INTERNAL_API_KEY="your_secure_internal_key" # Required for component sync
     NEWS_API_KEY=your_news_api_key
     ```
 3.  **Launch the stack**:
@@ -90,6 +92,7 @@ The system operates on a "Two-Track" intelligence gathering model:
 ### Frontend (TypeScript)
 - Use **Tailwind CSS v4** for styling (no `tailwind.config.js` needed, use CSS variables).
 - Prioritize **Server Components** where possible; use `"use client"` only for interactive elements.
+- Use **Server Actions** for any operations requiring the `INTERNAL_API_KEY` (e.g., manual pipeline triggers).
 - Components should be modular and located in `src/components/`.
 
 ### Crawler
@@ -101,7 +104,8 @@ The system operates on a "Two-Track" intelligence gathering model:
 
 ## 🤖 Agent Mandates
 
-- **Security:** Never commit API keys or hardcode secrets. Use `.env` files.
+- **Security:** Never commit API keys. Use `.env` files. Wrap values containing `#` or `!` in double quotes to prevent shell truncation.
+- **Internal Auth:** All internal services (Crawler, Frontend Server Actions) must include the `X-API-Key` header using the `INTERNAL_API_KEY`.
 - **Consistency:** Ensure the frontend adheres to the existing Tailwind 4 design system.
-- **Validation:** When modifying models, always generate and verify an Alembic migration.
-- **Testing:** When adding scrapers, verify they handle Markdown extraction correctly before passing to the LLM.
+- **Validation:** When modifying models, always generate and verify an Alembic migration (`docker compose exec backend alembic revision --autogenerate`).
+- **Persistence:** Ensure migrations and data volumes are mapped in `docker-compose.yml` for persistence across container restarts.

@@ -12,7 +12,7 @@ The system operates on a "Two-Track" intelligence gathering model:
 1.  **Crawl:** Scheduled workers (Celery) trigger scrapers to fetch data.
 2.  **Triage:** Gemini LLM analyzes the raw content to identify specific issues, assigning severity, category, and brand.
 3.  **Sync:** Structured data is stored in PostgreSQL via a FastAPI backend.
-4.  **Visualize:** A Next.js dashboard provides a real-time feed, risk charts, and timeline views of detected issues.
+4.  **Visualize:** A Next.js dashboard provides a real-time feed, risk charts, and timeline views. **Force-dynamic** rendering ensures data freshness on every visit.
 
 ---
 
@@ -35,6 +35,7 @@ The system operates on a "Two-Track" intelligence gathering model:
 | **Database** | PostgreSQL 16 |
 | **Cache/Queue** | Redis 7.2, Celery |
 | **AI/LLM** | Google Gemini (GenAI SDK) |
+| **Development** | Antigravity, Stitch, Gemini CLI, Jules |
 | **Infrastructure** | Docker, Docker Compose, Nginx |
 
 ---
@@ -52,10 +53,11 @@ The system operates on a "Two-Track" intelligence gathering model:
     Create a `.env` file in the root (see `docker-compose.yml` for required keys):
     ```bash
     POSTGRES_USER=postgres
-    POSTGRES_PASSWORD=your_secure_password
+    POSTGRES_PASSWORD="your_secure_password" # Use quotes for special characters like #
     POSTGRES_DB=qualitypulse
-    REDIS_PASSWORD=your_secure_password
+    REDIS_PASSWORD="your_secure_password"
     GEMINI_API_KEY=your_gemini_api_key
+    INTERNAL_API_KEY="your_secure_internal_key" # Required for component sync
     NEWS_API_KEY=your_news_api_key
     DOMAIN_NAME=doodle-choi.me
     ```
