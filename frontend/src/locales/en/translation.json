@@ -1,0 +1,53 @@
+{
+  "navigation": {
+    "Overview": "Overview",
+    "Dashboard": "Dashboard",
+    "Data Analyze": "Data Analyze",
+    "Visual Analytics": "Visual Analytics",
+    "Data Hub": "Data Hub",
+    "AI Risk Forecast": "AI Risk Forecast",
+    "World Issues": "World Issues",
+    "Global Feed": "Global Feed",
+    "Scraper Hub": "Scraper Hub",
+    "Sentiment Map": "Sentiment Map",
+    "Admin": "Admin",
+    "Source Monitor": "Source Monitor",
+    "Triage Agent": "Triage Agent",
+    "Crawler Logs": "Crawler Logs",
+    "Scheduler / Sync": "Scheduler / Sync"
+  },
+  "header": {
+    "Search placeholder": "Search analytics...",
+    "System": "System"
+  },
+  "badges": {
+    "New": "New",
+    "Live": "Live"
+  },
+  "sidebar": {
+    "Generate Report": "Generate Report",
+    "Active": "Active",
+    "Scheduler Off": "Scheduler Off",
+    "Next Run": "Next Run"
+  },
+  "dashboard": {
+    "Global Intelligence Overview": "Global Intelligence Overview",
+    "Real-time analysis": "Real-time analysis of global product safety and",
+    "quality intelligence": "quality intelligence",
+    "Last 30 Days": "Last 30 Days",
+    "Quarterly": "Quarterly",
+    "Yearly": "Yearly",
+    "Custom Range": "Custom Range",
+    "Analytical Trajectory": "Analytical Trajectory",
+    "7-day volume trend": "7-day volume trend cross-referenced globally",
+    "Current": "Current",
+    "Previous": "Previous",
+    "Severity Distribution": "Severity Distribution",
+    "Active Insight": "Active Insight",
+    "Issue volume increased": "Issue volume increased by 14% this morning.",
+    "Investigation recommended": "Investigation recommended.",
+    "Regional Distribution": "Regional Distribution",
+    "Recent Quality Events": "Recent Quality Events",
+    "Filter": "Filter"
+  }
+}

@@ -8,8 +8,10 @@ import { API_BASE_URL } from "@/config";
 import { NAV_ITEMS } from "@/config/navigation";
 import { useSidebar } from "@/contexts/SidebarContext";
 import { MaterialIcon } from "../ui/MaterialIcon";
+import { useTranslation } from "react-i18next";
 
 export function Sidebar() {
+  const { t } = useTranslation();
   const pathname = usePathname();
   const { isMobileOpen, setIsMobileOpen } = useSidebar();
   const [nextRun, setNextRun] = useState<string | null>(null);
@@ -74,7 +76,7 @@ export function Sidebar() {
           {NAV_ITEMS.map((group) => (
             <div key={group.label} className="mb-6">
               <h3 className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] px-3 mb-2 opacity-50">
-                {group.label}
+                {t(`navigation.${group.label}`, group.label)}
               </h3>
               {group.items.map((item) => {
                 const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
@@ -94,10 +96,10 @@ export function Sidebar() {
                     onClick={isPlaceholder ? (e) => e.preventDefault() : undefined}
                   >
                     <MaterialIcon name={item.icon} size="md" />
-                    <span className={clsx("font-headline", isActive ? "font-bold" : "font-semibold")}>{item.name}</span>
+                    <span className={clsx("font-headline", isActive ? "font-bold" : "font-semibold")}>{t(`navigation.${item.name}`, item.name)}</span>
                     {item.badge && (
                       <span className="ml-auto px-2 py-0.5 rounded-full text-[9px] font-black uppercase bg-primary/10 text-primary border border-primary/5">
-                        {item.badge}
+                        {t(`badges.${item.badge}`, item.badge)}
                       </span>
                     )}
                   </Link>
@@ -110,7 +112,7 @@ export function Sidebar() {
         {/* Bottom Section — Generate Report Button & Status */}
         <div className="mt-auto pt-6 border-t border-border-ghost/5 space-y-4">
           <button className="w-full py-2.5 bg-primary text-on-primary text-xs font-bold rounded-lg shadow-lg hover:scale-[0.98] transition-transform active:scale-95">
-            Generate Report
+            {t("sidebar.Generate Report", "Generate Report")}
           </button>
 
           {/* Scheduler Status */}
@@ -123,11 +125,11 @@ export function Sidebar() {
                 )}
               </div>
               <span className="text-[11px] font-bold text-text-muted uppercase tracking-wider">
-                {schedulerActive ? "Active" : "Scheduler Off"}
+                {schedulerActive ? t("sidebar.Active", "Active") : t("sidebar.Scheduler Off", "Scheduler Off")}
               </span>
             </div>
             <div className="text-[10px] text-text-muted font-medium flex justify-between">
-              <span>Next Run</span>
+              <span>{t("sidebar.Next Run", "Next Run")}</span>
               <span className="font-mono text-primary font-bold">
                 {nextRun || "--:--:--"}
               </span>

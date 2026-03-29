@@ -4,18 +4,21 @@ import { usePathname } from "next/navigation";
 import { useSidebar } from "@/contexts/SidebarContext";
 import { NAV_ITEMS } from "@/config/navigation";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { LanguageToggle } from "@/components/LanguageToggle";
+import { useTranslation } from "react-i18next";
 import { MaterialIcon } from "./ui/MaterialIcon";
 
 export function Header() {
+  const { t } = useTranslation();
   const pathname = usePathname();
   const { toggleMobile } = useSidebar();
 
   // Determine active breadcrumb based on pathname
-  let breadcrumb = { group: "System", item: "Overview" };
+  let breadcrumb = { group: t("header.System", "System"), item: t("navigation.Overview", "Overview") };
   for (const group of NAV_ITEMS) {
     for (const item of group.items) {
       if (pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href))) {
-        breadcrumb = { group: group.label, item: item.name };
+        breadcrumb = { group: t(`navigation.${group.label}`, group.label), item: t(`navigation.${item.name}`, item.name) };
       }
     }
   }
@@ -38,7 +41,7 @@ export function Header() {
           <MaterialIcon name="search" className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted/60 !text-lg" />
           <input
             className="w-full bg-surface-lowest border border-border-ghost/10 rounded-full py-2 pl-10 pr-4 text-sm text-text placeholder:text-text-muted/40 focus:ring-2 focus:ring-primary/20 transition-all outline-none"
-            placeholder="Search analytics..."
+            placeholder={t("header.Search placeholder", "Search analytics...")}
             type="text"
           />
         </div>
@@ -60,6 +63,7 @@ export function Header() {
           <MaterialIcon name="help" />
         </button>
 
+        <LanguageToggle />
         <ThemeToggle />
 
         <div className="h-8 w-px bg-slate-200 dark:bg-outline-variant mx-1 hidden sm:block" />
