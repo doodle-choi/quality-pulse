@@ -5,7 +5,7 @@ import { RiskChart } from "@/components/dashboard/RiskChart";
 import { TimelineChart } from "@/components/dashboard/TimelineChart";
 import { IssueAttr } from "@/components/dashboard/IssueCard";
 import { AutoRefresh } from "@/components/AutoRefresh";
-import { MaterialIcon } from "@/components/ui/MaterialIcon";
+import { MaterialIcon } from "../ui/MaterialIcon";
 import {
   MOCK_RISK_DATA,
   MOCK_TIMELINE_DATA,

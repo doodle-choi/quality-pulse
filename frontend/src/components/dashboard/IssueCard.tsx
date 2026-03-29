@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { ChevronDown, ExternalLink } from "lucide-react";
 import { clsx } from "clsx";
-import { MaterialIcon } from "@/components/ui/MaterialIcon";
+import { MaterialIcon } from "../ui/MaterialIcon";
 
 export interface IssueAttr {
   id: number;
