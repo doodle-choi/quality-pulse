@@ -95,7 +95,9 @@ yarn-error.log*
 
 # Project specific
 resources/
-certbot/
+certbot/*
+!certbot/conf/
+certbot/conf/*
 !certbot/conf/options-ssl-nginx.conf
 !certbot/conf/ssl-dhparams.pem
 
