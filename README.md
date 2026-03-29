@@ -1,6 +1,6 @@
 # Quality Pulse: AI-Driven Product Quality & Safety Monitor
 
-Quality Pulse is an advanced, automated system designed to monitor, scrape, and analyze product quality and safety issues (recalls, lawsuits, defects, hazards) across global sources. It leverages LLMs (Gemini) to triage unstructured web data into structured, actionable insights displayed on a real-time dashboard.
+Quality Pulse is an advanced, automated system designed to monitor, scrape, and analyze product quality and safety issues (recalls, lawsuits, defects, hazards) across global sources. It leverages LLMs (Gemini) to triage unstructured web data into structured, actionable insights displayed on a real-time dashboard. The platform acts as a comprehensive **"Digital Command Center,"** pairing thread-based issue tracking with deep data analysis, complex interactive visualizations (via Apache ECharts), and strategic insight generation.
 
 ## 🌟 Project Overview
 
@@ -12,7 +12,7 @@ The system operates on a "Two-Track" intelligence gathering model:
 1.  **Crawl:** Scheduled workers (Celery) trigger scrapers to fetch data.
 2.  **Triage:** Gemini LLM analyzes the raw content to identify specific issues, assigning severity, category, and brand.
 3.  **Sync:** Structured data is stored in PostgreSQL via a FastAPI backend.
-4.  **Visualize:** A Next.js dashboard provides a real-time feed, risk charts, and timeline views. **Force-dynamic** rendering ensures data freshness on every visit.
+4.  **Visualize & Analyze:** A Next.js dashboard provides a real-time feed, risk charts, and timeline views. A mandatory Light/Dark mode toggle supports both bright "Analytical" and dark "Command Center" environments. **Force-dynamic** rendering ensures data freshness on every visit.
 
 ---
 
@@ -30,7 +30,7 @@ The system operates on a "Two-Track" intelligence gathering model:
 | Component | Technology |
 | :--- | :--- |
 | **Language** | Python 3.13, TypeScript |
-| **Frontend** | Next.js (App Router), Tailwind CSS v4, Recharts |
+| **Frontend** | Next.js 15 (App Router), Tailwind CSS v4, Apache ECharts (`echarts-for-react`) |
 | **Backend** | FastAPI, Pydantic v2, SQLAlchemy 2.0 |
 | **Database** | PostgreSQL 16 |
 | **Cache/Queue** | Redis 7.2, Celery |
@@ -103,10 +103,11 @@ docker-compose logs -f crawler
 .
 ├── backend/            # FastAPI source, models, migrations
 ├── crawler/            # Scrapers, LLM triage logic, Celery workers
-├── frontend/           # Next.js source, components, dashboard
+├── frontend/           # Next.js source, components, dashboard, interactive charts
 ├── nginx/              # Nginx configuration
 ├── docker-compose.yml       # Local development orchestration
 ├── docker-compose.prod.yml  # Production orchestration
+├── DESIGN.md           # Core visual design and component architecture ("The Digital Command Center")
 ├── GEMINI.md           # Agent Context
 └── OPERATIONS.md       # Runbook & Operations Guide
 ```
