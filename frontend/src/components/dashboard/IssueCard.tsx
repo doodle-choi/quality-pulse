@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { ChevronDown, ExternalLink } from "lucide-react";
 import { clsx } from "clsx";
+import { MaterialIcon } from "@/components/ui/MaterialIcon";
 
 export interface IssueAttr {
   id: number;
@@ -80,39 +81,44 @@ export function IssueCard({ issue }: { issue: IssueAttr }) {
         {(issue.failed_component || issue.root_cause) && (
           <div className="flex flex-wrap items-center gap-2 mt-0.5">
             {issue.failed_component && (
-              <span className="text-[10px] font-mono text-purple-600 bg-purple-500/10 border border-purple-500/20 px-1.5 py-0.5 rounded flex items-center gap-1">
-                <span className="opacity-60 text-[9px]">CMP</span> {issue.failed_component}
+              <span className="text-[10px] font-mono font-bold text-tertiary-fixed-dim bg-tertiary/10 border border-tertiary/20 px-2 py-0.5 rounded flex items-center gap-1.5 shadow-[0_0_10px_rgba(0,0,0,0.1)] dark:shadow-[0_0_15px_rgba(255,175,211,0.1)]">
+                <span className="opacity-50 text-[9px] uppercase tracking-tighter">Cmp</span> {issue.failed_component}
               </span>
             )}
             {issue.root_cause && (
-              <span className="text-[10px] font-mono text-rose-600 bg-rose-500/10 border border-rose-500/20 px-1.5 py-0.5 rounded flex items-center gap-1">
-                <span className="opacity-60 text-[9px]">CAUSE</span> {issue.root_cause}
+              <span className="text-[10px] font-mono font-bold text-error bg-error/10 border border-error/20 px-2 py-0.5 rounded flex items-center gap-1.5">
+                <span className="opacity-50 text-[9px] uppercase tracking-tighter">Cause</span> {issue.root_cause}
               </span>
             )}
           </div>
         )}
         
-        <div className="flex items-center gap-3 text-[12px] text-text-muted mt-0.5">
-          <span className="flex items-center gap-1">
+        <div className="flex items-center gap-3.5 text-[12px] text-text-muted mt-1">
+          <span className="flex items-center gap-1.5">
             {mounted ? (
               <>
+                <MaterialIcon name="calendar_today" size="xs" className="opacity-50" />
                 {issue.published_at ? (
                   <span title={`Published: ${new Date(issue.published_at).toLocaleString()}`}>
-                    📅 {new Date(issue.published_at).toLocaleDateString()}
+                    {new Date(issue.published_at).toLocaleDateString()}
                   </span>
                 ) : (
                   <span title={`Found: ${new Date(issue.created_at).toLocaleString()}`}>
-                    🕒 {new Date(issue.created_at).toLocaleDateString()}
+                    {new Date(issue.created_at).toLocaleDateString()}
                   </span>
                 )}
               </>
             ) : ""}
           </span>
-          <span>•</span>
-          <span>{issue.region}</span>
-          <ChevronDown 
-            size={16} 
-            className={clsx("ml-auto transition-transform duration-300", expanded && "rotate-180")} 
+          <span className="opacity-20">|</span>
+          <span className="flex items-center gap-1.5">
+            <MaterialIcon name="public" size="xs" className="opacity-50" />
+            {issue.region}
+          </span>
+          <MaterialIcon 
+            name="expand_more" 
+            size="md"
+            className={clsx("ml-auto transition-transform duration-300 opacity-50", expanded && "rotate-180")} 
           />
         </div>
       </div>
@@ -126,10 +132,10 @@ export function IssueCard({ issue }: { issue: IssueAttr }) {
             href={issue.source_url} 
             target="_blank" 
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-[12px] text-primary font-medium hover:underline bg-primary/5 px-2.5 py-1 rounded-md border border-primary/10"
+            className="inline-flex items-center gap-2 text-[12px] text-primary font-bold hover:underline bg-primary/5 px-3 py-1.5 rounded-lg border border-primary/10 transition-colors"
             onClick={(e) => e.stopPropagation()}
           >
-            <ExternalLink size={14} /> 원본 출처 확인 (Original Source)
+            <MaterialIcon name="open_in_new" size="xs" /> 원본 출처 확인 (Original Source)
           </a>
         </div>
       )}
