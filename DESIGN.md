@@ -1,5 +1,5 @@
 # Quality Pulse: Design System Specification
-**Version:** 2.1 (Stitch Format Compliance)
+**Version:** 2.2 (Integrated Component Library)
 
 ## Overview
 The Creative North Star for the Quality Pulse frontend is **"The Digital Command Center & The Analytical Architect"**. 
@@ -33,12 +33,20 @@ Depth is achieved primarily through **Tonal Layering** (Surface hierarchy) rathe
 *   **Floating Elements (Glassmorphism)**: Used for dropdowns and floating context menus. Backgrounds are set to 60-80% opacity with a `20px` backdrop-blur to create a frosted glass effect.
 *   **Dialogs and Overlays**: Elevation 3. Use an Ambient Shadow (`0px 24px 48px rgba(0, 0, 0, 0.08)`) tinted with the `on-surface` color. Standard heavy drop shadows are forbidden.
 
-## Components
-*   **Buttons**: Primary buttons use a linear gradient (e.g., `primary` to `primary-container`) with a `8px` corner radius. No borders. Secondary actions use a `surface-container-highest` background.
-*   **Data Cards & Containers**: No borders. Use `8px` corner radius. Separate internal headers from content using `24px` vertical spacing rather than divider lines.
-*   **Specialized Data Tables**: Header rows use `surface-container-high` background with semi-bold `label` text. Do not use border/divider lines between rows; use alternating row colors (zebra striping) or ample vertical spacing.
-*   **Inputs & Search**: Background set to `surface-container-lowest`. On focus, transition to `surface-container-highest` and add a `2px` border using `primary`.
-*   **Data Visualization (Apache ECharts)**: Core library for analytic charts. High-density grids use `surface-variant` lines at 20% opacity. Critical data spikes use `tertiary` colors to cut through the neutral backgrounds.
+## Core Components (Implementation Guide)
+
+*   **`<MaterialIcon />`**: The primary icon engine. Uses Google Material Symbols (ligatures). 
+    *   *Usage*: `<MaterialIcon name="dashboard" size="md" filled={true} />`
+    *   *Constraint*: Always use semantic names from the Material Symbols Outlined set.
+*   **`<Button />`**: Enforces brand aesthetics.
+    *   *Primary*: Blue/Light Blue Gradient + Shadow (active state: scale-95).
+    *   *Secondary/Ghost*: Surface-based tonal shifts. No borders.
+*   **`<Card />`**: The fundamental layout unit.
+    *   *Design*: Uses `surface-lowest` (Dark: `surface-container`) to create depth via Tonal Layering.
+    *   *Rule*: Never add 1px solid borders to Cards. Use vertical spacing (24px) for internal hierarchy.
+
+## Data Visualization (Apache ECharts)
+Core library for analytic charts. High-density grids use `surface-variant` lines at 20% opacity. Critical data spikes use `tertiary` colors to cut through the neutral backgrounds.
 
 ## Do's and Don'ts
 *   **Do**: Embrace negative space. Use generous margins (`spacing-12` or `16`) to organize data.

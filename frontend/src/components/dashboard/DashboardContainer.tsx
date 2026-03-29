@@ -12,7 +12,7 @@ import {
   MOCK_KPI_STATS,
   MOCK_REGIONAL_DATA,
   MOCK_EVENTS,
-} from "@/lib/mockData";
+} from "@/shared/mockData";
 
 export function DashboardContainer({ initialIssues }: { initialIssues: IssueAttr[] }) {
   const hasData = initialIssues && initialIssues.length > 0;
