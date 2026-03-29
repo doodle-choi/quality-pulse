@@ -9,6 +9,14 @@ interface ComponentMatrixProps {
   selectedComponent: string;
 }
 
+// ⚡ Bolt: Pre-calculate O(1) severity weights instead of recreating arrays and using .indexOf() in loops
+const SEVERITY_WEIGHT: Record<string, number> = {
+  Low: 0,
+  Medium: 1,
+  High: 2,
+  Critical: 3,
+};
+
 export function ComponentMatrix({ issues, onComponentClick, selectedComponent }: ComponentMatrixProps) {
   // Aggregate issues by failed_component
   const componentStats = useMemo(() => {
@@ -25,8 +33,8 @@ export function ComponentMatrix({ issues, onComponentClick, selectedComponent }:
       stats[comp].count += 1;
       stats[comp].categories.add(issue.product_category);
       
-      const sevLevels = ["Low", "Medium", "High", "Critical"];
-      if (sevLevels.indexOf(issue.severity) > sevLevels.indexOf(stats[comp].severity)) {
+      // ⚡ Bolt: Replaced O(N) .indexOf() lookup with O(1) map
+      if ((SEVERITY_WEIGHT[issue.severity] ?? -1) > (SEVERITY_WEIGHT[stats[comp].severity] ?? -1)) {
         stats[comp].severity = issue.severity;
       }
     });
@@ -94,6 +102,7 @@ export function ComponentMatrix({ issues, onComponentClick, selectedComponent }:
               key={comp.name}
               onClick={() => onComponentClick(isSelected ? "" : comp.name)}
               className={`text-left p-3 rounded-lg border transition-all duration-200 group flex flex-col justify-between h-full min-h-[80px] ${getSeverityColors(comp.severity, isSelected)}`}
+              aria-label={`Filter by component ${comp.name}, ${comp.count} issues`}
             >
               <div className="flex justify-between items-start gap-2 mb-2">
                 <span className="text-[12px] font-bold leading-tight line-clamp-2">
