@@ -12,7 +12,24 @@ The system operates on a "Two-Track" intelligence gathering model:
 1.  **Crawl:** Scheduled workers (Celery) trigger scrapers to fetch data.
 2.  **Triage:** Gemini LLM analyzes the raw content to identify specific issues, assigning severity, category, and brand.
 3.  **Sync:** Structured data is stored in PostgreSQL via a FastAPI backend.
-4.  **Visualize & Analyze:** A Next.js dashboard provides a real-time feed, risk charts, and timeline views. A mandatory Light/Dark mode toggle supports both bright "Analytical" and dark "Command Center" environments. **Force-dynamic** rendering ensures data freshness on every visit.
+4.  **Visualize & Analyze:** A Next.js dashboard provides a real-time feed, risk charts, and timeline views. A mandatory Light/Dark mode toggle supports both bright "Analytical" (Light) mode and a dark "Command Center" (Dark) mode. **Force-dynamic** rendering ensures data freshness on every visit.
+
+---
+
+## 🏢 Core Navigation & Intelligence Hub
+
+The dashboard is structured into four primary cognitive layers:
+
+- **Overview:** Real-time KPI monitoring, risk distribution charts, and global incident timelines.
+- **Data Analyze:** 
+    - **Data Hub:** Central repository for uploading resources (CSV/JSON/PDF) and generating custom reports.
+    - **Visual Analytics:** High-density data exploration using Apache ECharts.
+    - **AI Risk Forecast:** Predictive modeling of product hazards (Phase 5).
+- **World Issues:** 
+    - **Global Feed:** Real-time intelligence stream (formerly `Insights Board`).
+    - **Scraper Hub:** Infrastructure health monitoring for Track A/B ingestion pipelines.
+    - **Sentiment Map:** Global media sentiment tracking (Phase 5).
+- **Admin:** Infrastructure management, Triage Agent logs, and scheduler settings.
 
 ---
 
@@ -27,10 +44,8 @@ The system operates on a "Two-Track" intelligence gathering model:
 
 ## 🛠️ Tech Stack
 
-| Component | Technology |
-| :--- | :--- |
 | **Language** | Python 3.13, TypeScript |
-| **Frontend** | Next.js 15 (App Router), Tailwind CSS v4, Apache ECharts (`echarts-for-react`) |
+| **Frontend** | Next.js 16 (App Router), Tailwind CSS v4, Apache ECharts, Material Symbols |
 | **Backend** | FastAPI, Pydantic v2, SQLAlchemy 2.0 |
 | **Database** | PostgreSQL 16 |
 | **Cache/Queue** | Redis 7.2, Celery |

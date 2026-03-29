@@ -27,10 +27,8 @@ The system operates on a "Two-Track" intelligence gathering model:
 
 ## 🛠️ Tech Stack
 
-| Component | Technology |
-| :--- | :--- |
 | **Language** | Python 3.13, TypeScript |
-| **Frontend** | Next.js 15 (App Router), Tailwind CSS v4, Apache ECharts (`echarts-for-react`) |
+| **Frontend** | Next.js 16 (App Router), Tailwind CSS v4, Apache ECharts, Material Symbols |
 | **Backend** | FastAPI, Pydantic v2, SQLAlchemy 2.0 |
 | **Database** | PostgreSQL 16 |
 | **Cache/Queue** | Redis 7.2, Celery |
@@ -74,7 +72,10 @@ The system operates on a "Two-Track" intelligence gathering model:
 .
 ├── backend/            # FastAPI source, models, migrations
 ├── crawler/            # Scrapers, LLM triage logic, Celery workers
-├── frontend/           # Next.js source, components, dashboard
+├── frontend/           # Next.js source, components, dashboard, shared utilities
+│   ├── src/
+│   │   ├── shared/     # Unified utilities and mock data (Absolute @/shared alias required)
+│   │   └── ...
 ├── nginx/              # Nginx configuration
 ├── docker-compose.yml  # Local development orchestration
 └── GEMINI.md           # This file (Agent Context)
@@ -107,5 +108,6 @@ The system operates on a "Two-Track" intelligence gathering model:
 - **Security:** Never commit API keys. Use `.env` files. Wrap values containing `#` or `!` in double quotes to prevent shell truncation.
 - **Internal Auth:** All internal services (Crawler, Frontend Server Actions) must include the `X-API-Key` header using the `INTERNAL_API_KEY`.
 - **Consistency:** Strictly adhere to the rules defined in `DESIGN.md`. Ensure the frontend uses Tonal Layering (no 1px borders), Dual-Font Typography (Inter & Manrope), and supports both Light and Dark modes. Support advanced data charting using Apache ECharts.
+- **Path Resolution:** Always use absolute path aliases (`@/shared/...`, `@/components/...`) for imports in the frontend to ensure compatibility with Turbopack. Never use relative paths for shared utilities.
 - **Validation:** When modifying models, always generate and verify an Alembic migration (`docker compose exec backend alembic revision --autogenerate`).
 - **Persistence:** Ensure migrations and data volumes are mapped in `docker-compose.yml` for persistence across container restarts.
