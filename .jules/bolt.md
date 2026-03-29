@@ -1,0 +1,3 @@
+## 2024-05-24 - [O(1) Lookup Optimization in Render Loops]
+**Learning:** Declaring static lookup arrays (like severity levels) inside loops or `useMemo` and iterating through them (e.g., using `indexOf()`) causes redundant memory allocations and unnecessary CPU overhead. Similarly, scanning O(N) object entries on every render for many child components (like countries in a Map) adds up quickly.
+**Action:** Lift constant mapping objects and lookup maps (like `SEVERITY_WEIGHTS` or `COUNTRY_TO_REGION`) outside component declarations to guarantee O(1) lookup times and zero unnecessary re-allocations during iteration or rendering.

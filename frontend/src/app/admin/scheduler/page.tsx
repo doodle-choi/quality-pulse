@@ -5,6 +5,8 @@ import {
   RefreshCw, Play, Clock, Settings2, CheckCircle2, 
   AlertTriangle, Loader2, Timer, Zap 
 } from "lucide-react";
+import { API_BASE_URL } from "@/config";
+import { triggerPipelineAction, updateIntervalAction } from "./actions";
 
 interface SchedulerStatus {
   is_running: boolean;
@@ -22,7 +24,7 @@ export default function SchedulerPage() {
 
   const fetchStatus = useCallback(async () => {
     try {
-      const res = await fetch("http://localhost:8000/api/v1/scheduler/status");
+      const res = await fetch(`${API_BASE_URL}/scheduler/status`);
       if (res.ok) {
         const data = await res.json();
         setStatus(data);
@@ -45,13 +47,14 @@ export default function SchedulerPage() {
     setTriggering(true);
     setTriggerMessage("");
     try {
-      const res = await fetch("http://localhost:8000/api/v1/scheduler/trigger", { method: "POST" });
-      if (res.ok) {
-        const data = await res.json();
-        setTriggerMessage(data.message);
+      const data = await triggerPipelineAction();
+      setTriggerMessage(data.message);
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        setTriggerMessage(e.message || "Failed to trigger pipeline.");
+      } else {
+        setTriggerMessage("Failed to trigger pipeline.");
       }
-    } catch (e) {
-      setTriggerMessage("Failed to trigger pipeline.");
     } finally {
       setTriggering(false);
       setTimeout(fetchStatus, 2000);
@@ -60,17 +63,15 @@ export default function SchedulerPage() {
 
   const handleIntervalUpdate = async () => {
     try {
-      const res = await fetch("http://localhost:8000/api/v1/scheduler/config", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ hours: newInterval })
-      });
-      if (res.ok) {
-        await fetchStatus();
-        setTriggerMessage(`Interval updated to every ${newInterval} hours.`);
+      await updateIntervalAction(newInterval);
+      await fetchStatus();
+      setTriggerMessage(`Interval updated to every ${newInterval} hours.`);
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        setTriggerMessage(e.message || "Failed to update interval.");
+      } else {
+        setTriggerMessage("Failed to update interval.");
       }
-    } catch (e) {
-      setTriggerMessage("Failed to update interval.");
     }
   };
 

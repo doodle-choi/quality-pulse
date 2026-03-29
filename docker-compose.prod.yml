@@ -35,6 +35,7 @@ services:
       REDIS_HOST: redis
       REDIS_PASSWORD: ${REDIS_PASSWORD}
       GEMINI_API_KEY: ${GEMINI_API_KEY}
+      INTERNAL_API_KEY: ${INTERNAL_API_KEY}
     depends_on:
       - db
       - redis
@@ -46,7 +47,9 @@ services:
     image: ghcr.io/doodle-choi/quality-pulse/frontend:latest
     container_name: qp-frontend-prod
     environment:
-      NEXT_PUBLIC_API_URL: https://${DOMAIN_NAME}/api/v1
+      NEXT_PUBLIC_API_URL: https://${DOMAIN_NAME:-doodle-choi.me}/api/v1
+      INTERNAL_API_URL: http://backend:8000/api/v1
+      INTERNAL_API_KEY: ${INTERNAL_API_KEY}
     depends_on:
       - backend
     restart: unless-stopped
@@ -64,13 +67,25 @@ services:
       REDIS_HOST: redis
       REDIS_PASSWORD: ${REDIS_PASSWORD}
       GEMINI_API_KEY: ${GEMINI_API_KEY}
+      INTERNAL_API_KEY: ${INTERNAL_API_KEY}
       NEWS_API_KEY: ${NEWS_API_KEY}
+      API_BASE_URL: http://backend:8000/api/v1
+      LLM_MODEL: gemini/gemini-2.5-flash
     depends_on:
       - db
       - redis
     restart: unless-stopped
     networks:
       - qp-network
+
+  certbot:
+    image: certbot/certbot
+    container_name: qp-certbot-prod
+    restart: unless-stopped
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
   nginx:
     image: ghcr.io/doodle-choi/quality-pulse/nginx:latest

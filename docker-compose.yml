@@ -32,6 +32,8 @@ services:
   backend:
     build: ./backend
     container_name: quality_pulse_backend
+    command: >
+      bash -c "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 8000"
     environment:
       POSTGRES_SERVER: db
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
@@ -40,8 +42,11 @@ services:
       REDIS_HOST: redis
       REDIS_PASSWORD: ${REDIS_PASSWORD}
       GEMINI_API_KEY: ${GEMINI_API_KEY}
+      INTERNAL_API_KEY: ${INTERNAL_API_KEY}
     ports:
       - "8000:8000"
+    volumes:
+      - ./backend:/app
     depends_on:
       - db
       - redis
@@ -54,6 +59,8 @@ services:
     container_name: quality_pulse_frontend
     environment:
       NEXT_PUBLIC_API_URL: http://localhost:8000/api/v1
+      INTERNAL_API_URL: http://backend:8000/api/v1
+      INTERNAL_API_KEY: ${INTERNAL_API_KEY}
     ports:
       - "3000:3000"
     depends_on:
@@ -73,7 +80,12 @@ services:
       REDIS_HOST: redis
       REDIS_PASSWORD: ${REDIS_PASSWORD}
       GEMINI_API_KEY: ${GEMINI_API_KEY}
+      INTERNAL_API_KEY: ${INTERNAL_API_KEY}
       NEWS_API_KEY: ${NEWS_API_KEY}
+      API_BASE_URL: http://backend:8000/api/v1
+      LLM_MODEL: gemini/gemini-2.5-flash
+    volumes:
+      - ./crawler:/app
     depends_on:
       - db
       - redis

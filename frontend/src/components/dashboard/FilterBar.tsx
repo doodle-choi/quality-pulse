@@ -1,17 +1,19 @@
 "use client";
 
 import { Search, Filter, X } from "lucide-react";
-import { clsx } from "clsx";
 
 interface FilterBarProps {
   searchQuery: string;
   setSearchQuery: (val: string) => void;
+  selectedRegion: string;
+  setSelectedRegion: (val: string) => void;
   selectedBrand: string;
   setSelectedBrand: (val: string) => void;
   selectedCategory: string;
   setSelectedCategory: (val: string) => void;
   selectedSeverity: string;
   setSelectedSeverity: (val: string) => void;
+  regions: string[];
   brands: string[];
   categories: string[];
   severities: string[];
@@ -22,12 +24,15 @@ interface FilterBarProps {
 export function FilterBar({
   searchQuery,
   setSearchQuery,
+  selectedRegion,
+  setSelectedRegion,
   selectedBrand,
   setSelectedBrand,
   selectedCategory,
   setSelectedCategory,
   selectedSeverity,
   setSelectedSeverity,
+  regions,
   brands,
   categories,
   severities,
@@ -38,7 +43,7 @@ export function FilterBar({
     <div className="bg-surface border border-border rounded-xl p-4 shadow-sm flex flex-col gap-4">
       <div className="flex flex-col lg:flex-row gap-4 items-center">
         {/* Search Input */}
-        <div className="relative w-full lg:w-1/3">
+        <div className="relative w-full lg:w-1/3 flex-shrink-0">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" size={18} />
           <input
             type="text"
@@ -46,11 +51,13 @@ export function FilterBar({
             className="w-full bg-surface-alt border border-border rounded-lg pl-10 pr-4 py-2 text-sm text-text focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            aria-label="Search queries"
           />
           {searchQuery && (
             <button 
               onClick={() => setSearchQuery("")}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text"
+              aria-label="Clear search"
             >
               <X size={14} />
             </button>
@@ -58,7 +65,7 @@ export function FilterBar({
         </div>
 
         {/* Filters Group */}
-        <div className="flex flex-wrap items-center gap-3 w-full lg:w-2/3 lg:justify-end">
+        <div className="flex flex-wrap items-center gap-3 w-full lg:flex-1 lg:justify-end">
           <div className="flex items-center gap-2">
             <Filter size={14} className="text-text-muted" />
             <span className="text-[12px] font-bold text-text-muted uppercase tracking-wider">Filters:</span>
@@ -66,8 +73,19 @@ export function FilterBar({
 
           <select
             className="bg-surface-alt border border-border rounded-lg px-3 py-1.5 text-xs font-medium text-text-secondary focus:outline-none focus:border-primary cursor-pointer hover:border-text-muted transition-colors"
+            value={selectedRegion}
+            onChange={(e) => setSelectedRegion(e.target.value)}
+            aria-label="Filter by region"
+          >
+            <option value="">All Regions</option>
+            {regions.map(r => <option key={r} value={r}>{r}</option>)}
+          </select>
+
+          <select
+            className="bg-surface-alt border border-border rounded-lg px-3 py-1.5 text-xs font-medium text-text-secondary focus:outline-none focus:border-primary cursor-pointer hover:border-text-muted transition-colors"
             value={selectedBrand}
             onChange={(e) => setSelectedBrand(e.target.value)}
+            aria-label="Filter by brand"
           >
             <option value="">All Brands</option>
             {brands.map(b => <option key={b} value={b}>{b}</option>)}
@@ -77,6 +95,7 @@ export function FilterBar({
             className="bg-surface-alt border border-border rounded-lg px-3 py-1.5 text-xs font-medium text-text-secondary focus:outline-none focus:border-primary cursor-pointer hover:border-text-muted transition-colors"
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
+            aria-label="Filter by category"
           >
             <option value="">All Categories</option>
             {categories.map(c => <option key={c} value={c}>{c}</option>)}
@@ -86,6 +105,7 @@ export function FilterBar({
             className="bg-surface-alt border border-border rounded-lg px-3 py-1.5 text-xs font-medium text-text-secondary focus:outline-none focus:border-primary cursor-pointer hover:border-text-muted transition-colors"
             value={selectedSeverity}
             onChange={(e) => setSelectedSeverity(e.target.value)}
+            aria-label="Filter by severity"
           >
             <option value="">All Severities</option>
             {severities.map(s => <option key={s} value={s}>{s}</option>)}
@@ -97,14 +117,17 @@ export function FilterBar({
             className="bg-surface-alt border border-border rounded-lg px-3 py-1.5 text-xs font-bold text-primary focus:outline-none focus:border-primary cursor-pointer hover:border-primary/50 transition-colors"
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
+            aria-label="Sort issues by"
           >
-            <option value="newest">Newest First</option>
+            <option value="newest">Newest Discovery</option>
+            <option value="published">Published Date</option>
             <option value="oldest">Oldest First</option>
           </select>
           
-          {(selectedBrand || selectedCategory || selectedSeverity || searchQuery) && (
+          {(selectedRegion || selectedBrand || selectedCategory || selectedSeverity || searchQuery) && (
             <button 
               onClick={() => {
+                setSelectedRegion("");
                 setSelectedBrand("");
                 setSelectedCategory("");
                 setSelectedSeverity("");

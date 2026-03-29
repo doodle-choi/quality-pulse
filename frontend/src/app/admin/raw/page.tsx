@@ -1,9 +1,11 @@
-import { Suspense } from "react";
 import { IssueAttr } from "@/components/dashboard/IssueCard";
+import { INTERNAL_API_BASE_URL } from "@/config";
+
+export const dynamic = "force-dynamic";
 
 async function getRawIssues(): Promise<IssueAttr[]> {
   try {
-    const res = await fetch("http://localhost:8000/api/v1/issues/", { 
+    const res = await fetch(`${INTERNAL_API_BASE_URL}/issues/`, { 
       cache: "no-store", // Admin view should always show freshest data
       headers: { "Content-Type": "application/json" }
     });

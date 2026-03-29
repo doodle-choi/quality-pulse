@@ -21,11 +21,12 @@ class Settings(BaseSettings):
 
     POSTGRES_SERVER: str = "localhost"
     POSTGRES_USER: str = "postgres"
-    POSTGRES_PASSWORD: str = "QP_Secure_DB_Pass_2026_!@#_Harden_"
+    POSTGRES_PASSWORD: str
     POSTGRES_DB: str = "qualitypulse"
     REDIS_HOST: str = "redis"
     REDIS_PORT: int = 6379
-    REDIS_PASSWORD: str = "QP_Secure_Redis_Pass_2026_!@#_Harden_"
+    REDIS_PASSWORD: str
+    INTERNAL_API_KEY: str
     
     @property
     def DATABASE_URL(self) -> str:

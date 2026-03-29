@@ -1,0 +1,113 @@
+# Quality Pulse: AI-Driven Product Quality & Safety Monitor
+
+Quality Pulse is an advanced, automated system designed to monitor, scrape, and analyze product quality and safety issues (recalls, lawsuits, defects, hazards) across global sources. It leverages LLMs (Gemini) to triage unstructured web data into structured, actionable insights displayed on a real-time dashboard. The platform acts as a comprehensive **"Digital Command Center,"** pairing thread-based issue tracking with deep data analysis, complex interactive visualizations (via Apache ECharts), and strategic insight generation.
+
+## 🌟 Project Overview
+
+The system operates on a "Two-Track" intelligence gathering model:
+- **Track A (HTML/Markdown):** Deep scraping of specific regulatory sites (e.g., CPSC) using `crawl4ai` and Playwright. Content is converted to Markdown and analyzed by Gemini for issue extraction.
+- **Track B (API Aggregators):** Real-time monitoring of global news and crisis events via NewsAPI and GDELT.
+
+### Key Workflows:
+1.  **Crawl:** Scheduled workers (Celery) trigger scrapers to fetch data.
+2.  **Triage:** Gemini LLM analyzes the raw content to identify specific issues, assigning severity, category, and brand.
+3.  **Sync:** Structured data is stored in PostgreSQL via a FastAPI backend.
+4.  **Visualize & Analyze:** A Next.js dashboard provides a real-time feed, risk charts, and timeline views. A mandatory Light/Dark mode toggle supports both bright "Analytical" and dark "Command Center" environments. **Force-dynamic** rendering ensures data freshness on every visit.
+
+---
+
+## 🏗️ Core Architecture
+
+- **`frontend/`**: Next.js 15+ application (React 19, Tailwind CSS 4, Recharts, Lucide).
+- **`backend/`**: FastAPI REST API (Python 3.13, SQLAlchemy 2.0, Alembic, PostgreSQL).
+- **`crawler/`**: Python-based scraper and triage engine (Crawl4AI, Celery, Redis, Google Gemini Pro).
+- **`nginx/`**: Reverse proxy for routing and SSL termination.
+
+---
+
+## 🛠️ Tech Stack
+
+| **Language** | Python 3.13, TypeScript |
+| **Frontend** | Next.js 16 (App Router), Tailwind CSS v4, Apache ECharts, Material Symbols |
+| **Backend** | FastAPI, Pydantic v2, SQLAlchemy 2.0 |
+| **Database** | PostgreSQL 16 |
+| **Cache/Queue** | Redis 7.2, Celery |
+| **AI/LLM** | Google Gemini (GenAI SDK) |
+| **Development** | Antigravity, Stitch, Gemini CLI, Jules |
+| **Infrastructure** | Docker, Docker Compose, Nginx |
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Docker and Docker Compose
+- Gemini API Key (Google AI Studio)
+- NewsAPI Key (Optional, for Track B)
+
+### Quick Start
+1.  **Clone the repository** and navigate to the root directory.
+2.  **Configure environment variables**:
+    Create a `.env` file in the root (see `docker-compose.yml` for required keys):
+    ```bash
+    POSTGRES_PASSWORD="your_secure_password" # Use quotes for special characters like #
+    REDIS_PASSWORD="your_secure_password"
+    GEMINI_API_KEY=your_gemini_api_key
+    INTERNAL_API_KEY="your_secure_internal_key" # Required for component sync
+    NEWS_API_KEY=your_news_api_key
+    ```
+3.  **Launch the stack**:
+    ```bash
+    docker-compose up --build
+    ```
+4.  **Access the applications**:
+    - Dashboard: `http://localhost:3000`
+    - API Docs: `http://localhost:8000/docs`
+
+---
+
+## 📂 Project Structure
+
+```text
+.
+├── backend/            # FastAPI source, models, migrations
+├── crawler/            # Scrapers, LLM triage logic, Celery workers
+├── frontend/           # Next.js source, components, dashboard, shared utilities
+│   ├── src/
+│   │   ├── shared/     # Unified utilities and mock data (Absolute @/shared alias required)
+│   │   └── ...
+├── nginx/              # Nginx configuration
+├── docker-compose.yml  # Local development orchestration
+└── GEMINI.md           # This file (Agent Context)
+```
+
+---
+
+## 🛠️ Development Conventions
+
+### Backend (Python)
+- Use **Poetry** for dependency management (`pyproject.toml`).
+- Follow **FastAPI** best practices: Dependency injection, Pydantic schemas, and `async` handlers.
+- Database migrations are managed by **Alembic**. Run `alembic upgrade head` after schema changes.
+
+### Frontend (TypeScript)
+- Use **Tailwind CSS v4** for styling (no `tailwind.config.js` needed, use CSS variables).
+- Prioritize **Server Components** where possible; use `"use client"` only for interactive elements.
+- Use **Server Actions** for any operations requiring the `INTERNAL_API_KEY` (e.g., manual pipeline triggers).
+- Components should be modular and located in `src/components/`.
+
+### Crawler
+- Scrapers are located in `crawler/scrapers/`.
+- Triage logic (LLM prompts) is in `crawler/triage.py`.
+- New targets should be added to `crawler/core/targets.py`.
+
+---
+
+## 🤖 Agent Mandates
+
+- **Security:** Never commit API keys. Use `.env` files. Wrap values containing `#` or `!` in double quotes to prevent shell truncation.
+- **Internal Auth:** All internal services (Crawler, Frontend Server Actions) must include the `X-API-Key` header using the `INTERNAL_API_KEY`.
+- **Consistency:** Strictly adhere to the rules defined in `DESIGN.md`. Ensure the frontend uses Tonal Layering (no 1px borders), Dual-Font Typography (Inter & Manrope), and supports both Light and Dark modes. Support advanced data charting using Apache ECharts.
+- **Path Resolution:** Always use absolute path aliases (`@/shared/...`, `@/components/...`) for imports in the frontend to ensure compatibility with Turbopack. Never use relative paths for shared utilities.
+- **Validation:** When modifying models, always generate and verify an Alembic migration (`docker compose exec backend alembic revision --autogenerate`).
+- **Persistence:** Ensure migrations and data volumes are mapped in `docker-compose.yml` for persistence across container restarts.

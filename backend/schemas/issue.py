@@ -11,6 +11,9 @@ class IssueBase(BaseModel):
     issue_type: str
     source_url: str
     region: Optional[str] = None
+    failed_component: Optional[str] = None
+    root_cause: Optional[str] = None
+    published_at: Optional[datetime] = None
 
 class IssueCreate(IssueBase):
     pass
