@@ -7,7 +7,7 @@ import { clsx } from "clsx";
 import { API_BASE_URL } from "@/config";
 import { NAV_ITEMS } from "@/config/navigation";
 import { useSidebar } from "@/contexts/SidebarContext";
-import { MaterialIcon } from "@/components/ui/MaterialIcon";
+import { MaterialIcon } from "../ui/MaterialIcon";
 
 export function Sidebar() {
   const pathname = usePathname();

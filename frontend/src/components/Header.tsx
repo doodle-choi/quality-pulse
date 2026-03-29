@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import { useSidebar } from "@/contexts/SidebarContext";
 import { NAV_ITEMS } from "@/config/navigation";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
-import { MaterialIcon } from "@/components/ui/MaterialIcon";
+import { MaterialIcon } from "./ui/MaterialIcon";
 
 export function Header() {
   const pathname = usePathname();

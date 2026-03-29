@@ -1,6 +1,6 @@
 "use client";
 
-import { MaterialIcon } from "@/components/ui/MaterialIcon";
+import { MaterialIcon } from "../../../components/ui/MaterialIcon";
 import { useState } from "react";
 
 export default function DataHubPage() {

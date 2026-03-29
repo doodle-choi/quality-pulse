@@ -1,6 +1,6 @@
 "use client";
 
-import { MaterialIcon } from "@/components/ui/MaterialIcon";
+import { MaterialIcon } from "../../../components/ui/MaterialIcon";
 
 export default function ScraperHubPage() {
   const scrapers = [

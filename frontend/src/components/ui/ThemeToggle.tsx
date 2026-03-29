@@ -2,7 +2,7 @@
 
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
-import { MaterialIcon } from "@/components/ui/MaterialIcon";
+import { MaterialIcon } from "./MaterialIcon";
 
 /**
  * ThemeToggle Component
