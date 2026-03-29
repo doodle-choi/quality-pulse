@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ChevronDown, ExternalLink } from "lucide-react";
 import { clsx } from "clsx";
 import { MaterialIcon } from "../ui/MaterialIcon";
+import { sanitizeUrl } from "@/utils/security";
 
 export interface IssueAttr {
   id: number;
@@ -129,7 +129,7 @@ export function IssueCard({ issue }: { issue: IssueAttr }) {
             {issue.description}
           </p>
           <a 
-            href={issue.source_url} 
+            href={sanitizeUrl(issue.source_url)}
             target="_blank" 
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-[12px] text-primary font-bold hover:underline bg-primary/5 px-3 py-1.5 rounded-lg border border-primary/10 transition-colors"
