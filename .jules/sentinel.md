@@ -11,3 +11,7 @@
 **Vulnerability:** Cross-Site Scripting (XSS) via `issue.source_url` in `IssueCard.tsx`.
 **Learning:** External or database-sourced URLs were being passed directly to an `<a>` tag's `href` attribute without sanitization, allowing potential `javascript:` protocol payloads.
 **Prevention:** Always use a dedicated URL sanitization utility (like `sanitizeUrl` from `security.ts`) to validate that the URL protocol is safe (`http:` or `https:`) before rendering it in any `href` attribute in React.
+## 2025-02-25 - [Missing Authorization on Workspace API]
+**Vulnerability:** The workspace creation, updating, and deletion API endpoints (`POST /`, `PATCH /{workspace_id}`, `DELETE /{workspace_id}`) in `backend/api/endpoints/workspace.py` lacked authentication/authorization checks, allowing any user to freely modify or delete workspaces.
+**Learning:** These endpoints were missing the `dependencies=[Depends(verify_api_key)]` parameter that other administrative or modifying endpoints (such as `issue.py` or `announcement.py`) have properly configured. This allowed authorization bypass.
+**Prevention:** Always verify that all sensitive and state-modifying API endpoints (POST, PUT, PATCH, DELETE) have appropriate authentication and authorization dependencies applied at the router level or endpoint level before deployment.
