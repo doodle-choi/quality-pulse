@@ -13,7 +13,7 @@ import { useTranslation } from "react-i18next";
 export function Sidebar() {
   const { t } = useTranslation();
   const pathname = usePathname();
-  const { isMobileOpen, setIsMobileOpen } = useSidebar();
+  const { isMobileOpen, setIsMobileOpen, isDesktopOpen, toggleDesktop } = useSidebar();
   const [nextRun, setNextRun] = useState<string | null>(null);
   const [schedulerActive, setSchedulerActive] = useState(false);
 
@@ -48,19 +48,41 @@ export function Sidebar() {
       
       {/* Sidebar — Stitch "Curator Pro" Layout */}
       <aside className={clsx(
-        "fixed left-0 top-0 bottom-0 flex flex-col p-4 z-50 w-64 transition-transform duration-300 ease-in-out md:translate-x-0",
+        "fixed left-0 top-0 bottom-0 flex flex-col p-4 z-50 transition-all duration-300 ease-in-out md:translate-x-0 group",
+        isDesktopOpen ? "w-64" : "w-16 md:w-16 -translate-x-full md:translate-x-0",
         "bg-surface-low shadow-[1px_0_0_0_rgba(0,0,0,0.05)] dark:shadow-[1px_0_0_0_rgba(255,255,255,0.02)]",
         isMobileOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         {/* Logo Section */}
-        <div className="flex items-center gap-3 px-2 mb-8">
-          <div className="w-10 h-10 bg-primary-container rounded-lg flex items-center justify-center">
+        <div className={clsx("flex items-center gap-3 mb-8", isDesktopOpen ? "px-2" : "px-0 flex-col")}>
+          {!isDesktopOpen && (
+             <button
+              className="hidden md:flex text-text-muted hover:text-text p-1 rounded-md active:bg-surface-high w-full justify-center"
+              onClick={toggleDesktop}
+              aria-label="Expand sidebar"
+            >
+              <MaterialIcon name="chevron_right" size="md" />
+            </button>
+          )}
+          <div className="w-10 h-10 shrink-0 bg-primary-container rounded-lg flex items-center justify-center">
             <MaterialIcon name="analytics" filled className="text-tertiary-fixed" />
           </div>
-          <div className="flex flex-col">
+          {isDesktopOpen && (
+          <div className="flex flex-col whitespace-nowrap overflow-hidden">
             <h2 className="text-[17px] font-black tracking-tight text-text leading-tight">G-NEXUS</h2>
             <p className="text-[9px] uppercase tracking-[0.2em] text-text-muted font-bold opacity-70">Global CS Team (DA)</p>
           </div>
+          )}
+          {/* Desktop Toggle */}
+          {isDesktopOpen && (
+          <button
+            className="hidden md:flex ml-auto text-text-muted hover:text-text p-1 rounded-md active:bg-surface-high"
+            onClick={toggleDesktop}
+            aria-label="Collapse sidebar"
+          >
+            <MaterialIcon name="chevron_left" size="md" />
+          </button>
+          )}
           {/* Mobile Close */}
           <button
             className="md:hidden ml-auto text-text-muted hover:text-text p-1 rounded-md"
@@ -75,9 +97,13 @@ export function Sidebar() {
         <nav className="flex-1 space-y-1 overflow-y-auto pr-1 sidebar-scroll">
           {NAV_ITEMS.map((group) => (
             <div key={group.label} className="mb-6">
-              <h3 className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] px-3 mb-2 opacity-50">
+              {isDesktopOpen ? (
+              <h3 className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] px-3 mb-2 opacity-50 whitespace-nowrap">
                 {t(`navigation.${group.label}`, group.label)}
               </h3>
+            ) : (
+              <div className="h-4" />
+            )}
               {group.items.map((item) => {
                 const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
                 const isPlaceholder = item.href === "#";
@@ -86,7 +112,7 @@ export function Sidebar() {
                     key={item.name}
                     href={item.href}
                     className={clsx(
-                      "group flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] transition-all duration-200",
+                      clsx("group flex items-center rounded-xl text-[13px] transition-all duration-200", isDesktopOpen ? "gap-3 px-3 py-2.5" : "justify-center p-2 mb-1"),
                       isActive
                         ? "bg-surface-highest text-text shadow-sm border border-border-ghost/5"
                         : isPlaceholder
@@ -96,8 +122,10 @@ export function Sidebar() {
                     onClick={isPlaceholder ? (e) => e.preventDefault() : undefined}
                   >
                     <MaterialIcon name={item.icon} size="md" />
-                    <span className={clsx("font-headline", isActive ? "font-bold" : "font-semibold")}>{t(`navigation.${item.name}`, item.name)}</span>
-                    {item.badge && (
+                    {isDesktopOpen && (
+                      <span className={clsx("font-headline whitespace-nowrap", isActive ? "font-bold" : "font-semibold")}>{t(`navigation.${item.name}`, item.name)}</span>
+                    )}
+                    {item.badge && isDesktopOpen && (
                       <span className="ml-auto px-2 py-0.5 rounded-full text-[9px] font-black uppercase bg-primary/10 text-primary border border-primary/5">
                         {t(`badges.${item.badge}`, item.badge)}
                       </span>
@@ -111,9 +139,15 @@ export function Sidebar() {
 
         {/* Bottom Section — Generate Report Button & Status */}
         <div className="mt-auto pt-6 border-t border-border-ghost/5 space-y-4">
-          <button className="w-full py-2.5 bg-primary text-on-primary text-xs font-bold rounded-lg shadow-lg hover:scale-[0.98] transition-transform active:scale-95">
+          {isDesktopOpen ? (
+          <button className="w-full py-2.5 bg-primary text-on-primary text-xs font-bold rounded-lg shadow-lg hover:scale-[0.98] transition-transform active:scale-95 whitespace-nowrap">
             {t("sidebar.Generate Report", "Generate Report")}
           </button>
+          ) : (
+            <button className="w-full aspect-square bg-primary text-on-primary text-xs font-bold rounded-lg shadow-lg hover:scale-[0.98] transition-transform active:scale-95 flex items-center justify-center">
+              <MaterialIcon name="summarize" size="sm" />
+            </button>
+          )}
 
           {/* Scheduler Status */}
           <div className="px-1 flex flex-col gap-1.5">
@@ -124,16 +158,20 @@ export function Sidebar() {
                   <div className="absolute inset-0 w-2 h-2 rounded-full bg-green-500 animate-ping opacity-75" />
                 )}
               </div>
-              <span className="text-[11px] font-bold text-text-muted uppercase tracking-wider">
+              {isDesktopOpen && (
+              <span className="text-[11px] font-bold text-text-muted uppercase tracking-wider whitespace-nowrap">
                 {schedulerActive ? t("sidebar.Active", "Active") : t("sidebar.Scheduler Off", "Scheduler Off")}
               </span>
+              )}
             </div>
-            <div className="text-[10px] text-text-muted font-medium flex justify-between">
+            {isDesktopOpen && (
+            <div className="text-[10px] text-text-muted font-medium flex justify-between whitespace-nowrap">
               <span>{t("sidebar.Next Run", "Next Run")}</span>
               <span className="font-mono text-primary font-bold">
                 {nextRun || "--:--:--"}
               </span>
             </div>
+            )}
           </div>
         </div>
       </aside>
