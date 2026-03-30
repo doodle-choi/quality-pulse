@@ -27,7 +27,7 @@ except (OperationalError, Exception) as e:
     
     # SQLite 사용 시 테이블 자동 생성
     from models.issue import Base
-        from models.workspace import Workspace
+    from models.workspace import Workspace
     Base.metadata.create_all(bind=engine)
     logger.info(f"📁 SQLite database initialized at {sqlite_path}")
 

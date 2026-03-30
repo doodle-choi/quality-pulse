@@ -1,84 +1,136 @@
 "use client";
 
 import { useState, useEffect } from "react";
-// In v2.2.3 WidthProvider is a default export of react-grid-layout/WidthProvider
-import ReactGridLayout from "react-grid-layout";
+import * as FlexLayout from "flexlayout-react";
+import "flexlayout-react/style/light.css";
 
-
-import "react-grid-layout/css/styles.css";
-import "react-resizable/css/styles.css";
-
-import { Plus, Maximize2, X, GripHorizontal, Save, Share2 } from "lucide-react";
+import { Plus, Save, Share2, Layers } from "lucide-react";
 import { DataExplorer, Dataset } from "@/components/analytics/DataExplorer";
-import { cn } from "@/utils/cn";
 
-interface Pane {
-  id: string;
-  dataset: Dataset | null;
-  title: string;
-}
-
-interface LayoutItem {
-  i: string;
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-}
+// Base FlexLayout layout structure
+const INITIAL_LAYOUT = {
+  global: {
+    tabEnableClose: true,
+    tabEnableRename: true,
+    tabSetEnableMaximize: true,
+  },
+  borders: [],
+  layout: {
+    type: "row",
+    weight: 100,
+    children: [
+      {
+        type: "tabset",
+        weight: 50,
+        children: [
+          {
+            type: "tab",
+            name: "Empty View",
+            component: "dataset",
+            config: { id: "view-1", dataset: null }
+          }
+        ]
+      },
+      {
+        type: "tabset",
+        weight: 50,
+        children: [
+          {
+            type: "tab",
+            name: "Empty View 2",
+            component: "dataset",
+            config: { id: "view-2", dataset: null }
+          }
+        ]
+      }
+    ]
+  }
+};
 
 export default function AnalyticsPage() {
   const [isClient, setIsClient] = useState(false);
-  const [layout, setLayout] = useState<LayoutItem[]>([
-    { i: "view-1", x: 0, y: 0, w: 6, h: 6 },
-    { i: "view-2", x: 6, y: 0, w: 6, h: 6 }
-  ]);
-  const [panes, setPanes] = useState<Pane[]>([
-    { id: "view-1", title: "Empty View", dataset: null },
-    { id: "view-2", title: "Empty View", dataset: null }
-  ]);
-  const [activePane, setActivePane] = useState<string | null>(null);
+  const [model, setModel] = useState<FlexLayout.Model | null>(null);
 
   useEffect(() => {
-    setIsClient(true);
+    // Must initialize model only on client-side
+    setModel(FlexLayout.Model.fromJson(INITIAL_LAYOUT));
+    const timer = setTimeout(() => setIsClient(true), 0);
+    return () => clearTimeout(timer);
   }, []);
 
-  const onLayoutChange = (newLayout: LayoutItem[]) => {
-    setLayout(newLayout);
-  };
-
-  const addPane = () => {
-    const id = `view-${Date.now()}`;
-    setPanes(prev => [...prev, { id, title: "New View", dataset: null }]);
-    setLayout(prev => [...prev, { i: id, x: (prev.length * 4) % 12, y: Infinity, w: 6, h: 6 }]);
-  };
-
-  const removePane = (id: string) => {
-    setPanes(prev => prev.filter(p => p.id !== id));
-    setLayout(prev => prev.filter(l => l.i !== id));
-    if (activePane === id) setActivePane(null);
+  const addView = () => {
+    if (!model) return;
+    model.doAction(FlexLayout.Actions.addNode({
+      type: "tab",
+      component: "dataset",
+      name: "New View",
+      config: { id: `view-${Date.now()}`, dataset: null }
+    }, "root", FlexLayout.DockLocation.CENTER, -1));
   };
 
   const handleSelectDataset = (dataset: Dataset) => {
-    if (!activePane) return alert("Please click on a view pane to select it first.");
-    setPanes(prev => prev.map(pane =>
-      pane.id === activePane
-        ? { ...pane, dataset, title: dataset.title }
-        : pane
-    ));
+    if (!model) return;
+    const activeTab = model.getActiveTabset()?.getSelectedNode() as FlexLayout.TabNode;
+
+    if (!activeTab) {
+      alert("Please select a tab first to load the dataset into.");
+      return;
+    }
+
+    // Update the tab's name and config
+    model.doAction(FlexLayout.Actions.updateNodeAttributes(activeTab.getId(), {
+      name: dataset.title,
+      config: { ...activeTab.getConfig(), dataset: dataset }
+    }));
   };
 
-  if (!isClient) return null;
+  const factory = (node: FlexLayout.TabNode) => {
+    const component = node.getComponent();
+    if (component === "dataset") {
+      const config = node.getConfig();
+      const dataset: Dataset | null = config?.dataset;
+
+      return (
+        <div className="flex-1 w-full h-full p-6 flex flex-col items-center justify-center relative bg-[var(--surface)] text-[var(--foreground)] overflow-auto">
+          {!dataset ? (
+             <div className="text-center max-w-sm">
+               <div className="w-16 h-16 rounded-full bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center mx-auto mb-4 border border-blue-100 dark:border-blue-800">
+                  <Layers className="w-8 h-8 text-blue-500" />
+               </div>
+               <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-1">Select a Dataset</h3>
+               <p className="text-sm text-gray-500 dark:text-gray-400">
+                 Click on a dataset from the Data Explorer on the left to load it into this active tab.
+               </p>
+             </div>
+          ) : (
+             <div className="flex flex-col items-center gap-4 text-center max-w-md">
+               <dataset.icon className="w-16 h-16 text-blue-500 opacity-90" />
+               <div>
+                  <h3 className="font-semibold text-2xl text-gray-800 dark:text-gray-200">{dataset.title}</h3>
+                  <p className="text-base text-gray-500 dark:text-gray-400 mt-2">{dataset.description}</p>
+               </div>
+               <div className="mt-4 px-4 py-1.5 bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400 text-sm font-semibold uppercase tracking-wider rounded-full border border-green-200 dark:border-green-800">
+                 {dataset.type} Widget Loading...
+               </div>
+             </div>
+          )}
+        </div>
+      );
+    }
+  };
+
+  if (!isClient || !model) return null;
 
   return (
     <div className="h-[calc(100vh-4rem)] flex flex-col overflow-hidden bg-[var(--background)]">
       {/* Top Toolbar */}
-      <div className="flex-shrink-0 h-14 px-4 flex justify-between items-center border-b border-[var(--border)] bg-[var(--surface)]">
+      <div className="flex-shrink-0 h-14 px-4 flex justify-between items-center border-b border-[var(--border)] bg-[var(--surface)] z-10">
         <h1 className="text-xl font-bold flex items-center gap-2">
            <span className="text-blue-500">❖</span> Visual Analytics
         </h1>
         <div className="flex gap-2">
-           <button onClick={addPane} className="flex items-center gap-2 px-3 py-1.5 bg-[var(--surface-alt)] hover:bg-[var(--surface-hover)] border border-[var(--border)] rounded-md transition-colors text-sm font-medium">
-             <Plus className="w-4 h-4" /> Add View
+           <button onClick={addView} className="flex items-center gap-2 px-3 py-1.5 bg-[var(--surface-alt)] hover:bg-[var(--surface-hover)] border border-[var(--border)] rounded-md transition-colors text-sm font-medium">
+             <Plus className="w-4 h-4" /> Add Tab
            </button>
            <div className="w-px h-6 bg-[var(--border)] mx-1 self-center" />
            <button className="flex items-center gap-2 px-3 py-1.5 bg-[var(--surface-alt)] hover:bg-[var(--surface-hover)] border border-[var(--border)] rounded-md transition-colors text-sm font-medium">
@@ -91,77 +143,48 @@ export default function AnalyticsPage() {
       </div>
 
       <div className="flex-1 flex overflow-hidden">
+        {/* Sidebar Data Explorer */}
         <DataExplorer onSelectDataset={handleSelectDataset} />
 
-        <div className="flex-1 overflow-auto bg-gray-50/50 dark:bg-gray-900/50 p-2">
-           {/* For POC we pass a static width. We will implement responsive width provider later. */}
-           <ReactGridLayout width={1200}
-              className="layout h-full min-h-[800px]"
-              layout={layout as any}
-
-
-
-              onLayoutChange={onLayoutChange as any}
-
-
-            >
-              {panes.map((pane) => (
-                <div
-                  key={pane.id}
-                  className={cn(
-                    "bg-[var(--surface)] border-2 rounded-lg shadow-sm flex flex-col overflow-hidden transition-all duration-200",
-                    activePane === pane.id ? "border-blue-500 shadow-blue-500/20" : "border-[var(--border)] hover:border-blue-300"
-                  )}
-                  onClick={() => setActivePane(pane.id)}
-                >
-                  <div className={cn(
-                    "drag-handle p-2 border-b cursor-move flex items-center justify-between group transition-colors",
-                    activePane === pane.id ? "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800" : "bg-[var(--surface-alt)] border-[var(--border)]"
-                  )}>
-                     <div className="flex items-center gap-2 text-sm font-medium">
-                        <GripHorizontal className="w-4 h-4 text-gray-400 group-hover:text-gray-600 cursor-grab" />
-                        <span className={activePane === pane.id ? "text-blue-700 dark:text-blue-300" : "text-gray-700 dark:text-gray-300"}>
-                          {pane.title}
-                        </span>
-                     </div>
-                     <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button className="p-1 hover:bg-black/5 dark:hover:bg-white/10 rounded" title="Maximize">
-                           <Maximize2 className="w-3.5 h-3.5 text-gray-500" />
-                        </button>
-                        <button
-                          className="p-1 hover:bg-red-50 dark:hover:bg-red-900/30 rounded text-red-500"
-                          title="Close"
-                          onClick={(e) => { e.stopPropagation(); removePane(pane.id); }}
-                        >
-                           <X className="w-3.5 h-3.5" />
-                        </button>
-                     </div>
-                  </div>
-                  <div className="flex-1 p-4 flex items-center justify-center relative bg-[var(--surface)]">
-                    {!pane.dataset ? (
-                       <div className="text-center">
-                         <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mx-auto mb-3">
-                            <Plus className="w-6 h-6 text-gray-400" />
-                         </div>
-                         <p className="text-sm text-gray-500 font-medium">Select a dataset from the explorer</p>
-                         <p className="text-xs text-gray-400 mt-1">Make sure this pane is active (blue border)</p>
-                       </div>
-                    ) : (
-                       <div className="flex flex-col items-center gap-3">
-                         <pane.dataset.icon className="w-12 h-12 text-blue-500 opacity-80" />
-                         <div className="text-center">
-                            <h3 className="font-semibold text-lg">{pane.dataset.title}</h3>
-                            <p className="text-sm text-gray-500 max-w-xs mt-1">{pane.dataset.description}</p>
-                         </div>
-                         <div className="mt-4 px-3 py-1 bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400 text-xs font-semibold uppercase tracking-wider rounded-full border border-green-200 dark:border-green-800">
-                           {pane.dataset.type} Component Placeholder
-                         </div>
-                       </div>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </ReactGridLayout>
+        {/* Docking Layout Container */}
+        <div className="flex-1 relative bg-gray-50 dark:bg-gray-900">
+          {/* Custom style overrides for FlexLayout to match our theme */}
+          <style dangerouslySetInnerHTML={{__html: `
+            .flexlayout__layout {
+              background: transparent !important;
+            }
+            .flexlayout__tabset {
+              background: var(--surface) !important;
+              border: 1px solid var(--border) !important;
+              border-radius: 6px !important;
+              overflow: hidden !important;
+              margin: 4px !important;
+              box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            }
+            .flexlayout__tabset_header {
+              background: var(--surface-alt) !important;
+              border-bottom: 1px solid var(--border) !important;
+            }
+            .flexlayout__tab_button {
+              background: transparent !important;
+              color: var(--foreground) !important;
+              border-right: 1px solid var(--border) !important;
+            }
+            .flexlayout__tab_button--selected {
+              background: var(--surface) !important;
+              color: var(--primary) !important;
+              font-weight: 600 !important;
+              border-bottom: 2px solid var(--primary) !important;
+            }
+            .flexlayout__splitter {
+              background: transparent !important;
+            }
+            .flexlayout__splitter:hover {
+              background: var(--primary) !important;
+              opacity: 0.5;
+            }
+          `}} />
+          <FlexLayout.Layout model={model} factory={factory} />
         </div>
       </div>
     </div>

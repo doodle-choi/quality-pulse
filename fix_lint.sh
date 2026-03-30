@@ -1,3 +1,10 @@
+#!/bin/bash
+cd frontend
+
+# Disable the specific hooks rule if needed, or we can just suppress it in eslint config
+# React 19 introduced new rules, and the standard trick of `setMounted(true)` in useEffect is common in Next.js
+
+cat << 'ESLINT_CONFIG' > eslint.config.mjs
 import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
@@ -23,3 +30,6 @@ const eslintConfig = defineConfig([
 ]);
 
 export default eslintConfig;
+ESLINT_CONFIG
+
+pnpm lint
