@@ -22,7 +22,7 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "Quality Pulse | Analytics Dashboard",
+  title: "Quality Planning | Analytics Dashboard",
   description: "Global Appliance Defect and Recall Integrated Control Dashboard",
 };
 

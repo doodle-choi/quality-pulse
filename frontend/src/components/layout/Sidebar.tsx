@@ -58,8 +58,8 @@ export function Sidebar() {
             <MaterialIcon name="analytics" filled className="text-tertiary-fixed" />
           </div>
           <div className="flex flex-col">
-            <h2 className="text-[17px] font-black tracking-tight text-text leading-tight">Quality Pulse</h2>
-            <p className="text-[9px] uppercase tracking-[0.2em] text-text-muted font-bold opacity-70">Enterprise Analytics</p>
+            <h2 className="text-[17px] font-black tracking-tight text-text leading-tight">G-NEXUS</h2>
+            <p className="text-[9px] uppercase tracking-[0.2em] text-text-muted font-bold opacity-70">Global CS Team (Digital Appliance)</p>
           </div>
           {/* Mobile Close */}
           <button
