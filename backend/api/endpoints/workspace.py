@@ -3,12 +3,13 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from db.database import get_db
+from api.deps import verify_api_key
 import crud.workspace as crud_workspace
 import schemas.workspace as schema_workspace
 
 router = APIRouter()
 
-@router.post("/", response_model=schema_workspace.Workspace)
+@router.post("/", response_model=schema_workspace.Workspace, dependencies=[Depends(verify_api_key)])
 def create_workspace(
     workspace: schema_workspace.WorkspaceCreate,
     db: Session = Depends(get_db)
@@ -34,7 +35,7 @@ def read_workspace(
         raise HTTPException(status_code=404, detail="Workspace not found")
     return workspace
 
-@router.patch("/{workspace_id}", response_model=schema_workspace.Workspace)
+@router.patch("/{workspace_id}", response_model=schema_workspace.Workspace, dependencies=[Depends(verify_api_key)])
 def update_workspace(
     workspace_id: str,
     workspace: schema_workspace.WorkspaceUpdate,
@@ -45,7 +46,7 @@ def update_workspace(
         raise HTTPException(status_code=404, detail="Workspace not found")
     return db_workspace
 
-@router.delete("/{workspace_id}")
+@router.delete("/{workspace_id}", dependencies=[Depends(verify_api_key)])
 def delete_workspace(
     workspace_id: str,
     db: Session = Depends(get_db)
