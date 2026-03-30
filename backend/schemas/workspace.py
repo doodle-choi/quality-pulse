@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import Any, Dict
 from datetime import datetime
-import uuid
+
 
 class WorkspaceBase(BaseModel):
     title: str

@@ -9,7 +9,7 @@ export interface Dataset {
   title: string;
   type: "chart" | "map" | "table";
   description: string;
-  icon: any;
+  icon: React.ElementType;
   category: string;
 }
 

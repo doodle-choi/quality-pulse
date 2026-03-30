@@ -7,7 +7,6 @@ import ReactGridLayout from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 
-import { useTranslation } from "react-i18next";
 import { Plus, Maximize2, X, GripHorizontal, Save, Share2 } from "lucide-react";
 import { DataExplorer, Dataset } from "@/components/analytics/DataExplorer";
 import { cn } from "@/utils/cn";
@@ -18,10 +17,17 @@ interface Pane {
   title: string;
 }
 
+interface LayoutItem {
+  i: string;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
 export default function AnalyticsPage() {
-  const { t } = useTranslation();
   const [isClient, setIsClient] = useState(false);
-  const [layout, setLayout] = useState<any[]>([
+  const [layout, setLayout] = useState<LayoutItem[]>([
     { i: "view-1", x: 0, y: 0, w: 6, h: 6 },
     { i: "view-2", x: 6, y: 0, w: 6, h: 6 }
   ]);
@@ -35,7 +41,7 @@ export default function AnalyticsPage() {
     setIsClient(true);
   }, []);
 
-  const onLayoutChange = (newLayout: any) => {
+  const onLayoutChange = (newLayout: LayoutItem[]) => {
     setLayout(newLayout);
   };
 
@@ -90,11 +96,11 @@ export default function AnalyticsPage() {
            {/* For POC we pass a static width. We will implement responsive width provider later. */}
            <ReactGridLayout
               className="layout h-full min-h-[800px]"
-              layout={layout}
+              layout={layout as any}
 
               width={1200}
 
-              onLayoutChange={onLayoutChange}
+              onLayoutChange={onLayoutChange as any}
 
 
             >
