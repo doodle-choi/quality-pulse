@@ -3,8 +3,7 @@ import type { Metadata } from "next";
 import { Inter, Manrope } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import { Header } from "@/components/Header";
-import { Sidebar } from "@/components/layout/Sidebar";
+import { ClientLayout } from "@/components/layout/ClientLayout";
 import { SidebarProvider } from "@/contexts/SidebarContext";
 import { NotificationProvider } from "@/contexts/NotificationContext";
 
@@ -50,16 +49,10 @@ export default function RootLayout({
         >
           <SidebarProvider>
             <NotificationProvider>
-            <div className="flex min-h-screen relative">
-              <Sidebar />
-              {/* Main content area pushed by sidebar width (w-64 = 256px) */}
-              <div className="flex-1 flex flex-col min-w-0 md:ml-64">
-                <Header />
-                <main className="flex-1 px-5 py-6 md:px-8 md:py-12 w-full max-w-[1400px] mx-auto">
-                  {children}
-                </main>
-              </div>
-            </div>
+
+                <ClientLayout>
+                {children}
+              </ClientLayout>
 
             {/* Global Decoration — Stitch ambient blur circles */}
             <div className="fixed top-0 right-0 w-[500px] h-[500px] bg-slate-200/20 dark:bg-primary/5 rounded-full blur-[120px] -z-10 pointer-events-none" />
