@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { Header } from "@/components/Header";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { SidebarProvider } from "@/contexts/SidebarContext";
+import { NotificationProvider } from "@/contexts/NotificationContext";
 
 // Configure Dual Fonts (The Analytical Architect / Command Center)
 const inter = Inter({
@@ -48,6 +49,7 @@ export default function RootLayout({
           disableTransitionOnChange={false}
         >
           <SidebarProvider>
+            <NotificationProvider>
             <div className="flex min-h-screen relative">
               <Sidebar />
               {/* Main content area pushed by sidebar width (w-64 = 256px) */}
@@ -62,6 +64,7 @@ export default function RootLayout({
             {/* Global Decoration — Stitch ambient blur circles */}
             <div className="fixed top-0 right-0 w-[500px] h-[500px] bg-slate-200/20 dark:bg-primary/5 rounded-full blur-[120px] -z-10 pointer-events-none" />
             <div className="fixed bottom-0 left-64 w-[300px] h-[300px] bg-primary/5 rounded-full blur-[100px] -z-10 pointer-events-none" />
+          </NotificationProvider>
           </SidebarProvider>
         </ThemeProvider>
         </I18nProvider>

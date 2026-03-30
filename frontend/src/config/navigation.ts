@@ -40,6 +40,7 @@ export const NAV_ITEMS: NavGroup[] = [
       { name: "Triage Agent", href: "/admin/triage", icon: "troubleshoot" },
       { name: "Crawler Logs", href: "/admin/logs", icon: "description" },
       { name: "Scheduler / Sync", href: "/admin/scheduler", icon: "sync" },
+      { name: "Announcements", href: "/admin/announcements", icon: "campaign" },
     ]
   }
 ];

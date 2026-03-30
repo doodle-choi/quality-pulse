@@ -7,11 +7,27 @@ import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { useTranslation } from "react-i18next";
 import { MaterialIcon } from "./ui/MaterialIcon";
+import { useNotifications } from "@/contexts/NotificationContext";
+import { useState, useRef, useEffect } from "react";
 
 export function Header() {
   const { t } = useTranslation();
   const pathname = usePathname();
   const { toggleMobile } = useSidebar();
+  const { announcements, unreadCount, markAsRead, markAllAsRead } = useNotifications();
+  const [showNotifications, setShowNotifications] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowNotifications(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // Determine active breadcrumb based on pathname
   let breadcrumb = { group: t("header.System", "System"), item: t("navigation.Overview", "Overview") };
@@ -22,6 +38,14 @@ export function Header() {
       }
     }
   }
+
+  const handleNotificationClick = () => {
+    setShowNotifications(!showNotifications);
+  };
+
+  const handleAnnouncementClick = (id: number) => {
+    markAsRead(id);
+  };
 
   return (
     <header className="sticky top-0 z-40 flex items-center justify-between px-4 md:px-8 h-16 bg-surface/80 backdrop-blur-md border-b border-border-ghost/5">
@@ -56,9 +80,68 @@ export function Header() {
 
       {/* Right: Actions */}
       <div className="flex items-center gap-1 md:gap-2">
-        <button className="p-2 text-text-muted hover:text-text hover:bg-surface-high rounded-full transition-colors active:scale-95">
-          <MaterialIcon name="notifications" />
-        </button>
+        <div className="relative" ref={dropdownRef}>
+          <button
+            className="p-2 text-text-muted hover:text-text hover:bg-surface-high rounded-full transition-colors active:scale-95 relative"
+            onClick={handleNotificationClick}
+            aria-label="Notifications"
+          >
+            <MaterialIcon name="notifications" />
+            {unreadCount > 0 && (
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full ring-2 ring-surface animate-pulse" />
+            )}
+          </button>
+
+          {/* Notification Dropdown */}
+          {showNotifications && (
+            <div className="absolute right-0 mt-2 w-80 bg-surface border border-border-ghost/10 rounded-xl shadow-lg overflow-hidden z-50">
+              <div className="p-4 border-b border-border-ghost/5 flex items-center justify-between">
+                <h3 className="font-bold text-text">Announcements</h3>
+                {unreadCount > 0 && (
+                  <button
+                    onClick={markAllAsRead}
+                    className="text-xs text-primary hover:text-primary/80 font-medium"
+                  >
+                    Mark all as read
+                  </button>
+                )}
+              </div>
+              <div className="max-h-96 overflow-y-auto">
+                {announcements.length === 0 ? (
+                  <div className="p-8 text-center text-text-muted text-sm">
+                    No new announcements.
+                  </div>
+                ) : (
+                  <div className="divide-y divide-border-ghost/5">
+                    {announcements.map((announcement) => (
+                      <div
+                        key={announcement.id}
+                        className={`p-4 hover:bg-surface-high/50 transition-colors cursor-pointer ${!(announcement as { isRead?: boolean }).isRead ? 'bg-primary/5' : ''}`}
+                        onClick={() => handleAnnouncementClick(announcement.id)}
+                      >
+                        <div className="flex items-start justify-between gap-2 mb-1">
+                          <h4 className={`text-sm font-semibold ${!(announcement as { isRead?: boolean }).isRead ? 'text-primary' : 'text-text'}`}>
+                            {announcement.title}
+                          </h4>
+                          {!(announcement as { isRead?: boolean }).isRead && (
+                            <span className="w-1.5 h-1.5 bg-primary rounded-full shrink-0 mt-1.5" />
+                          )}
+                        </div>
+                        <p className="text-xs text-text-muted line-clamp-2">
+                          {announcement.content}
+                        </p>
+                        <span className="text-[10px] text-text-muted/60 mt-2 block">
+                          {new Date(announcement.created_at).toLocaleDateString()}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+
         <button className="p-2 text-text-muted hover:text-text hover:bg-surface-high rounded-full transition-colors active:scale-95 hidden sm:flex">
           <MaterialIcon name="help" />
         </button>
