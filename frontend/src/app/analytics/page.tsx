@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 // In v2.2.3 WidthProvider is a default export of react-grid-layout/WidthProvider
 import ReactGridLayout from "react-grid-layout";
 
+
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 
@@ -94,11 +95,11 @@ export default function AnalyticsPage() {
 
         <div className="flex-1 overflow-auto bg-gray-50/50 dark:bg-gray-900/50 p-2">
            {/* For POC we pass a static width. We will implement responsive width provider later. */}
-           <ReactGridLayout
+           <ReactGridLayout width={1200}
               className="layout h-full min-h-[800px]"
               layout={layout as any}
 
-              width={1200}
+
 
               onLayoutChange={onLayoutChange as any}
 
