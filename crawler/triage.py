@@ -1,4 +1,5 @@
 import os
+import re
 import json
 import logging
 from pydantic import BaseModel, Field
@@ -89,12 +90,9 @@ async def parse_markdown_with_llm(markdown_content: str, source_url: str = "N/A"
         raw_text = response.choices[0].message.content
         clean_json_str = raw_text.replace("```json", "").replace("```", "").strip()
         
-        # JSON parsing with some robustness
         try:
             parsed_json = json.loads(clean_json_str)
         except json.JSONDecodeError:
-            # Try to find the array if there's surrounding text
-            import re
             match = re.search(r"\[.*\]", clean_json_str, re.DOTALL)
             if match:
                 parsed_json = json.loads(match.group())
