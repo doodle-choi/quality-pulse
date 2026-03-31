@@ -30,7 +30,6 @@ def test_get_issues_pagination_defaults():
     query = db.query.return_value
     order_by = query.order_by.return_value
     offset = order_by.offset.return_value
-    limit = offset.limit.return_value
 
     get_issues(db)
 

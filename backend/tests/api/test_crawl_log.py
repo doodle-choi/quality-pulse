@@ -9,7 +9,7 @@ def test_update_log_not_found():
     db = MagicMock()
 
     # Mock the CRUD layer to return None (not found)
-    with patch("api.endpoints.crawl_log.crud_crawl_log.update_crawl_log") as mock_update_log:
+    with patch("api.endpoints.crawl_log.crawl_log.update_crawl_log") as mock_update_log:
         mock_update_log.return_value = None
 
         # Prepare update data

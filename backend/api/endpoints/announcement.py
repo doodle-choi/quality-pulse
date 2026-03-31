@@ -3,7 +3,6 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from db.database import get_db
-from models.announcement import Announcement
 from schemas.announcement import Announcement as AnnouncementSchema, AnnouncementCreate, AnnouncementUpdate
 from crud import announcement as crud_announcement
 from api.deps import verify_api_key

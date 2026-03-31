@@ -16,7 +16,6 @@ try:
     with engine.connect() as conn:
         # PostgreSQL 성공 시 테이블 생성 (최초 1회 또는 신규 인스턴스 대비)
         from models.issue import Base
-        from models.workspace import Workspace
         Base.metadata.create_all(bind=engine)
         logger.info("✅ Connected to PostgreSQL and verified schema.")
 except (OperationalError, Exception) as e:
@@ -27,7 +26,6 @@ except (OperationalError, Exception) as e:
     
     # SQLite 사용 시 테이블 자동 생성
     from models.issue import Base
-    from models.workspace import Workspace
     Base.metadata.create_all(bind=engine)
     logger.info(f"📁 SQLite database initialized at {sqlite_path}")
 

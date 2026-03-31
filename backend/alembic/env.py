@@ -22,8 +22,7 @@ import sys  # noqa: E402
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 from core.config import settings  # noqa: E402
-from models.issue import Base
-from models.announcement import Announcement  # noqa: E402
+from models.issue import Base  # noqa: E402
 
 target_metadata = Base.metadata
 

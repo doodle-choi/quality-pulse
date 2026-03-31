@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from typing import List
 
@@ -23,7 +23,6 @@ def create_issue(issue: IssueCreate, db: Session = Depends(get_db)):
     """
     return crud_issue.create_issue(db=db, issue=issue)
 
-from fastapi import Query
 
 @router.get("/", response_model=List[Issue])
 def read_issues(skip: int = Query(0, ge=0), limit: int = Query(100, ge=1, le=1000), db: Session = Depends(get_db)):
