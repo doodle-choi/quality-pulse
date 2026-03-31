@@ -4,11 +4,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { clsx } from "clsx";
-import { API_BASE_URL } from "@/config";
 import { NAV_ITEMS } from "@/config/navigation";
 import { useSidebar } from "@/contexts/SidebarContext";
 import { MaterialIcon } from "../ui/MaterialIcon";
 import { useTranslation } from "react-i18next";
+import { fetchStatusAction } from "@/app/admin/scheduler/actions";
 
 export function Sidebar() {
   const { t } = useTranslation();
@@ -20,14 +20,11 @@ export function Sidebar() {
   useEffect(() => {
     const fetchScheduler = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/scheduler/status`);
-        if (res.ok) {
-          const data = await res.json();
-          setSchedulerActive(data.is_running);
-          if (data.next_run_time) {
-            const d = new Date(data.next_run_time);
-            setNextRun(d.toTimeString().split(' ')[0]);
-          }
+        const data = await fetchStatusAction();
+        setSchedulerActive(data.is_running);
+        if (data.next_run_time) {
+          const d = new Date(data.next_run_time);
+          setNextRun(d.toTimeString().split(' ')[0]);
         }
       } catch { setSchedulerActive(false); }
     };

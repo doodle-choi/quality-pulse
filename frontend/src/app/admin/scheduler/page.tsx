@@ -5,8 +5,7 @@ import {
   RefreshCw, Play, Clock, Settings2, CheckCircle2, 
   AlertTriangle, Loader2, Timer, Zap 
 } from "lucide-react";
-import { API_BASE_URL } from "@/config";
-import { triggerPipelineAction, updateIntervalAction } from "./actions";
+import { triggerPipelineAction, updateIntervalAction, fetchStatusAction } from "./actions";
 
 interface SchedulerStatus {
   is_running: boolean;
@@ -24,12 +23,9 @@ export default function SchedulerPage() {
 
   const fetchStatus = useCallback(async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/scheduler/status`);
-      if (res.ok) {
-        const data = await res.json();
-        setStatus(data);
-        setNewInterval(data.interval_hours);
-      }
+      const data = await fetchStatusAction();
+      setStatus(data);
+      setNewInterval(data.interval_hours);
     } catch (e) {
       console.error("Scheduler status fetch error:", e);
     } finally {

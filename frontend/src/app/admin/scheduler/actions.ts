@@ -4,6 +4,29 @@ import { INTERNAL_API_BASE_URL } from "@/config";
 
 const INTERNAL_API_KEY = process.env.INTERNAL_API_KEY || "";
 
+export async function fetchStatusAction() {
+  try {
+    const res = await fetch(`${INTERNAL_API_BASE_URL}/scheduler/status`, {
+      method: "GET",
+      headers: {
+        "X-API-Key": INTERNAL_API_KEY,
+        "Cache-Control": "no-store",
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error(`Failed to fetch status: ${res.status}`);
+    }
+
+    return await res.json();
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(error.message || "Failed to fetch status");
+    }
+    throw new Error("Failed to fetch status");
+  }
+}
+
 export async function triggerPipelineAction() {
   try {
     const res = await fetch(`${INTERNAL_API_BASE_URL}/scheduler/trigger`, {
