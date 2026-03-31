@@ -1,5 +1,4 @@
 from models.issue import Base
-from models.announcement import Announcement
 from db.database import engine
 
 print("Creating tables...")

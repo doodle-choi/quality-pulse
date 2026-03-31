@@ -12,7 +12,7 @@ def get_announcements(
 ) -> List[Announcement]:
     query = db.query(Announcement)
     if published_only:
-        query = query.filter(Announcement.is_published == True)
+        query = query.filter(Announcement.is_published)
 
     # 최신 공지사항이 먼저 오도록 정렬
     return query.order_by(desc(Announcement.created_at)).offset(skip).limit(limit).all()
