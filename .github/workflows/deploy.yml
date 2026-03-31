@@ -77,17 +77,33 @@ jobs:
     steps:
       - name: Deploy to GCP VM
         uses: appleboy/ssh-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           host: ${{ secrets.GCP_VM_HOST }}
           username: ${{ secrets.GCP_VM_USER }}
           key: ${{ secrets.GCP_VM_SSH_KEY }}
+          envs: GITHUB_TOKEN
           script: |
             PROJECT_DIR="$HOME/Workspace/Projects/quality-pulse"
+            
+            # 1. GHCR Authentication
+            echo $GITHUB_TOKEN | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            
+            # 2. Cleanup old images to prevent 'no space' or 'EOF' network errors
+            docker system prune -af --filter "until=24h" || true
+            
+            # 3. Handle Repository
             if [ ! -d "$PROJECT_DIR" ]; then
               mkdir -p "$(dirname "$PROJECT_DIR")"
               git clone https://github.com/${{ github.repository }}.git "$PROJECT_DIR"
             fi
             cd "$PROJECT_DIR"
+            
+            # 4. Fix dubious ownership Git issue
+            git config --global --add safe.directory "$PROJECT_DIR"
             git pull origin ${{ github.ref_name }}
+            
+            # 5. Pull & Deploy
             docker compose -f docker-compose.prod.yml pull
             docker compose -f docker-compose.prod.yml up -d
