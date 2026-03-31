@@ -128,12 +128,17 @@ async def process_track_b_target(source, tracker):
                 articles = json.loads(data)
                 chunk_size = 10
                 all_issues = []
+                tasks = []
                 for i in range(0, len(articles), chunk_size):
                     chunk = articles[i:i + chunk_size]
                     chunk_data = json.dumps(chunk, ensure_ascii=False)
                     tracker.log(f"⏳ Processing chunk {i//chunk_size + 1}/{(len(articles)-1)//chunk_size + 1} for {s_id}")
                     fallback_url = "https://newsapi.org" if "newsapi" in s_id else "https://www.gdeltproject.org"
-                    issues = await parse_markdown_with_llm(chunk_data, source_url=fallback_url)
+                    # ⚡ Bolt: Execute LLM chunk parsing concurrently to drastically reduce waiting time
+                    tasks.append(parse_markdown_with_llm(chunk_data, source_url=fallback_url))
+
+                results = await asyncio.gather(*tasks)
+                for issues in results:
                     if issues:
                         all_issues.extend(issues)
                         
@@ -187,7 +192,7 @@ async def run_unified_pipeline():
                 tracker.log(f"✅ Successfully synced {len(all_issues)} issues in bulk.")
                 tracker.update_stats(saved=len(all_issues))
             else:
-                tracker.log(f"❌ Failed to sync issues in bulk.")
+                tracker.log("❌ Failed to sync issues in bulk.")
         else:
             tracker.log("No new unique issues discovered.")
 
