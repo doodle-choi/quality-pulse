@@ -40,27 +40,27 @@ export default function RootLayout({
         />
       </head>
       <body className={`${inter.variable} ${manrope.variable} antialiased font-sans min-h-screen bg-surface text-text selection:bg-primary/30`}>
-        <I18nProvider>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
           enableSystem={true}
           disableTransitionOnChange={false}
         >
-          <SidebarProvider>
-            <NotificationProvider>
+          <I18nProvider>
+            <SidebarProvider>
+              <NotificationProvider>
 
-                <ClientLayout>
-                {children}
-              </ClientLayout>
+                  <ClientLayout>
+                  {children}
+                </ClientLayout>
 
-            {/* Global Decoration — Stitch ambient blur circles */}
-            <div className="fixed top-0 right-0 w-[500px] h-[500px] bg-slate-200/20 dark:bg-primary/5 rounded-full blur-[120px] -z-10 pointer-events-none" />
-            <div className="fixed bottom-0 left-64 w-[300px] h-[300px] bg-primary/5 rounded-full blur-[100px] -z-10 pointer-events-none" />
-          </NotificationProvider>
-          </SidebarProvider>
+              {/* Global Decoration — Stitch ambient blur circles */}
+              <div className="fixed top-0 right-0 w-[500px] h-[500px] bg-slate-200/20 dark:bg-primary/5 rounded-full blur-[120px] -z-10 pointer-events-none" />
+              <div className="fixed bottom-0 left-64 w-[300px] h-[300px] bg-primary/5 rounded-full blur-[100px] -z-10 pointer-events-none" />
+            </NotificationProvider>
+            </SidebarProvider>
+          </I18nProvider>
         </ThemeProvider>
-        </I18nProvider>
       </body>
     </html>
   );
