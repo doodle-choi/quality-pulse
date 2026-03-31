@@ -8,7 +8,7 @@ class Issue(Base):
     __tablename__ = "issues"
 
     id = Column(Integer, primary_key=True, index=True)
-    title = Column(String, index=True, nullable=False)
+    title = Column(String, unique=True, index=True, nullable=False)
     description = Column(Text, nullable=True)
     brand = Column(String, index=True, nullable=False)
     product_category = Column(String, index=True, nullable=False)
