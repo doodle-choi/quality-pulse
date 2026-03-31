@@ -113,13 +113,16 @@ SEED_DATA = [
 async def seed():
     print("[SEED] DB Seeding Start...")
     async with httpx.AsyncClient(timeout=10) as client:
-        for i, issue in enumerate(SEED_DATA, 1):
+        async def _post_issue(i, issue):
             try:
                 res = await client.post(API_BASE_URL, json=issue)
                 status = "[OK]" if res.status_code in (200, 201) else f"[WARN {res.status_code}]"
                 print(f"  [{i}/{len(SEED_DATA)}] {status} {issue['brand']} - {issue['title'][:40]}...")
             except Exception as e:
                 print(f"  [{i}/{len(SEED_DATA)}] [ERR] Error: {e}")
+
+        tasks = [_post_issue(i, issue) for i, issue in enumerate(SEED_DATA, 1)]
+        await asyncio.gather(*tasks)
     print("\n[DONE] Seeding Complete!")
 
 if __name__ == "__main__":
