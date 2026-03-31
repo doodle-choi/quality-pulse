@@ -1,5 +1,6 @@
 from typing import List
 from sqlalchemy.orm import Session
+from sqlalchemy.dialects.postgresql import insert as pg_insert
 from models.issue import Issue
 from schemas.issue import IssueCreate
 
@@ -46,12 +47,15 @@ def create_issue(db: Session, issue: IssueCreate):
     """
     # 글로벌 수집 중복 방지 (Deduplication) 로직
     # 동일한 제목의 이슈가 이미 DB에 존재하면 새롭게 Insert하지 않고 기존 Row를 반환합니다.
-    existing_issue = db.query(Issue).filter(Issue.title == issue.title).first()
-    if existing_issue:
-        return existing_issue
-        
-    db_issue = Issue(**issue.model_dump())
-    db.add(db_issue)
+
+    # Use PostgreSQL UPSERT (ON CONFLICT DO NOTHING)
+    # This prevents race conditions and avoids an extra SELECT query per insert
+    # provided that 'title' has a unique constraint.
+    stmt = pg_insert(Issue).values(**issue.model_dump())
+    stmt = stmt.on_conflict_do_nothing(index_elements=['title'])
+
+    db.execute(stmt)
     db.commit()
-    db.refresh(db_issue)
-    return db_issue
+
+    # Query the issue to return it (either the newly inserted or the existing one)
+    return db.query(Issue).filter(Issue.title == issue.title).first()
