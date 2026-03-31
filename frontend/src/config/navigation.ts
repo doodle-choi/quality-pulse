@@ -20,7 +20,9 @@ export const NAV_ITEMS: NavGroup[] = [
   {
     label: "Data Analyze",
     items: [
-      { name: "Visual Analytics", href: "/data-analyze/visual", icon: "monitoring" },
+      { name: "Visual Lab", href: "/data-analyze/visual", icon: "monitoring" },
+      { name: "Metabase", href: "/data-analyze/metabase", icon: "analytics" },
+      { name: "Superset", href: "/data-analyze/superset", icon: "rocket_launch" },
       { name: "Data Hub", href: "/data-analyze/hub", icon: "hub", badge: "New" },
       { name: "AI Risk Forecast", href: "/data-analyze/forecast", icon: "auto_graph" },
     ]
