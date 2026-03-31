@@ -174,7 +174,15 @@ export function ExternalBIContainer({
         {/* Action Button */}
         <button
           className="mt-8 px-6 py-2.5 bg-primary text-white rounded-lg text-sm font-semibold hover:opacity-90 shadow-md shadow-primary/20 transition-all active:scale-[0.98] flex items-center gap-2"
-          onClick={() => window.open(`https://${toolName.toLowerCase()}.io`, "_blank")}
+          onClick={() => {
+            let url = `https://${toolName.toLowerCase()}.io`;
+            if (toolName.toLowerCase().includes("metabase")) {
+              url = "https://www.metabase.com/";
+            } else if (toolName.toLowerCase().includes("superset")) {
+              url = "https://superset.apache.org/";
+            }
+            window.open(url, "_blank");
+          }}
         >
           <MaterialIcon name="open_in_new" size="sm" />
           Learn More About {toolName}

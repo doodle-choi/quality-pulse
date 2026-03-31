@@ -40,12 +40,12 @@ export function Sidebar() {
     <>
       {/* Mobile Overlay */}
       {isMobileOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/50 z-40 md:hidden backdrop-blur-sm"
           onClick={() => setIsMobileOpen(false)}
         />
       )}
-      
+
       {/* Sidebar — Stitch "Curator Pro" Layout */}
       <aside className={clsx(
         "fixed left-0 top-0 bottom-0 flex flex-col p-4 z-50 transition-all duration-300 ease-in-out md:translate-x-0 group",
@@ -56,7 +56,7 @@ export function Sidebar() {
         {/* Logo Section */}
         <div className={clsx("flex items-center gap-3 mb-8", isDesktopOpen ? "px-2" : "px-0 flex-col")}>
           {!isDesktopOpen && (
-             <button
+            <button
               className="hidden md:flex text-text-muted hover:text-text p-1 rounded-md active:bg-surface-high w-full justify-center"
               onClick={toggleDesktop}
               aria-label="Expand sidebar"
@@ -68,20 +68,20 @@ export function Sidebar() {
             <MaterialIcon name="analytics" filled className="text-tertiary-fixed" />
           </div>
           {isDesktopOpen && (
-          <div className="flex flex-col whitespace-nowrap overflow-hidden">
-            <h2 className="text-[17px] font-black tracking-tight text-text leading-tight">G-NEXUS</h2>
-            <p className="text-[9px] uppercase tracking-[0.2em] text-text-muted font-bold opacity-70">Global CS Team (DA)</p>
-          </div>
+            <div className="flex flex-col whitespace-nowrap overflow-hidden">
+              <h2 className="text-[17px] font-black tracking-tight text-text leading-tight">G-NEXUS</h2>
+              <p className="text-[9px] uppercase tracking-[0.2em] text-text-muted font-bold opacity-70">Global CS TEAM</p>
+            </div>
           )}
           {/* Desktop Toggle */}
           {isDesktopOpen && (
-          <button
-            className="hidden md:flex ml-auto text-text-muted hover:text-text p-1 rounded-md active:bg-surface-high"
-            onClick={toggleDesktop}
-            aria-label="Collapse sidebar"
-          >
-            <MaterialIcon name="chevron_left" size="md" />
-          </button>
+            <button
+              className="hidden md:flex ml-auto text-text-muted hover:text-text p-1 rounded-md active:bg-surface-high"
+              onClick={toggleDesktop}
+              aria-label="Collapse sidebar"
+            >
+              <MaterialIcon name="chevron_left" size="md" />
+            </button>
           )}
           {/* Mobile Close */}
           <button
@@ -98,12 +98,12 @@ export function Sidebar() {
           {NAV_ITEMS.map((group) => (
             <div key={group.label} className="mb-6">
               {isDesktopOpen ? (
-              <h3 className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] px-3 mb-2 opacity-50 whitespace-nowrap">
-                {t(`navigation.${group.label}`, group.label)}
-              </h3>
-            ) : (
-              <div className="h-4" />
-            )}
+                <h3 className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] px-3 mb-2 opacity-50 whitespace-nowrap">
+                  {t(`navigation.${group.label}`, group.label)}
+                </h3>
+              ) : (
+                <div className="h-4" />
+              )}
               {group.items.map((item) => {
                 const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
                 const isPlaceholder = item.href === "#";
@@ -140,9 +140,9 @@ export function Sidebar() {
         {/* Bottom Section — Generate Report Button & Status */}
         <div className="mt-auto pt-6 border-t border-border-ghost/5 space-y-4">
           {isDesktopOpen ? (
-          <button className="w-full py-2.5 bg-primary text-on-primary text-xs font-bold rounded-lg shadow-lg hover:scale-[0.98] transition-transform active:scale-95 whitespace-nowrap">
-            {t("sidebar.Generate Report", "Generate Report")}
-          </button>
+            <button className="w-full py-2.5 bg-primary text-on-primary text-xs font-bold rounded-lg shadow-lg hover:scale-[0.98] transition-transform active:scale-95 whitespace-nowrap">
+              {t("sidebar.Generate Report", "Generate Report")}
+            </button>
           ) : (
             <button className="w-full aspect-square bg-primary text-on-primary text-xs font-bold rounded-lg shadow-lg hover:scale-[0.98] transition-transform active:scale-95 flex items-center justify-center">
               <MaterialIcon name="summarize" size="sm" />
@@ -159,18 +159,18 @@ export function Sidebar() {
                 )}
               </div>
               {isDesktopOpen && (
-              <span className="text-[11px] font-bold text-text-muted uppercase tracking-wider whitespace-nowrap">
-                {schedulerActive ? t("sidebar.Active", "Active") : t("sidebar.Scheduler Off", "Scheduler Off")}
-              </span>
+                <span className="text-[11px] font-bold text-text-muted uppercase tracking-wider whitespace-nowrap">
+                  {schedulerActive ? t("sidebar.Active", "Active") : t("sidebar.Scheduler Off", "Scheduler Off")}
+                </span>
               )}
             </div>
             {isDesktopOpen && (
-            <div className="text-[10px] text-text-muted font-medium flex justify-between whitespace-nowrap">
-              <span>{t("sidebar.Next Run", "Next Run")}</span>
-              <span className="font-mono text-primary font-bold">
-                {nextRun || "--:--:--"}
-              </span>
-            </div>
+              <div className="text-[10px] text-text-muted font-medium flex justify-between whitespace-nowrap">
+                <span>{t("sidebar.Next Run", "Next Run")}</span>
+                <span className="font-mono text-primary font-bold">
+                  {nextRun || "--:--:--"}
+                </span>
+              </div>
             )}
           </div>
         </div>
