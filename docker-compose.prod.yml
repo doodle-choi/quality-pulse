@@ -49,6 +49,7 @@ services:
       NEXT_PUBLIC_API_URL: https://${DOMAIN_NAME:-doodle-choi.me}/api/v1
       INTERNAL_API_URL: http://backend:8000/api/v1
       INTERNAL_API_KEY: ${INTERNAL_API_KEY}
+      AUTH_SECRET: ${AUTH_SECRET}
     depends_on:
       - backend
     restart: unless-stopped

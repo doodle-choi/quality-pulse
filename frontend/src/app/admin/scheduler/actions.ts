@@ -1,10 +1,18 @@
 "use server";
 
 import { INTERNAL_API_BASE_URL } from "@/config";
+import { withAdminAuth } from "@/utils/withAdminAuth";
+import { z } from "zod";
 
 const INTERNAL_API_KEY = process.env.INTERNAL_API_KEY || "";
 
-export async function fetchStatusAction() {
+// Zod Schemas
+const updateIntervalSchema = z.object({
+  hours: z.number().min(1, "Minimum 1 hour").max(168, "Maximum 1 week (168 hours)"),
+});
+
+// Internal Functions
+async function fetchStatusInternal() {
   try {
     const res = await fetch(`${INTERNAL_API_BASE_URL}/scheduler/status`, {
       method: "GET",
@@ -27,7 +35,7 @@ export async function fetchStatusAction() {
   }
 }
 
-export async function triggerPipelineAction() {
+async function triggerPipelineInternal() {
   try {
     const res = await fetch(`${INTERNAL_API_BASE_URL}/scheduler/trigger`, {
       method: "POST",
@@ -51,7 +59,7 @@ export async function triggerPipelineAction() {
   }
 }
 
-export async function updateIntervalAction(hours: number) {
+async function updateIntervalInternal(hours: number) {
   try {
     const res = await fetch(`${INTERNAL_API_BASE_URL}/scheduler/config`, {
       method: "PATCH",
@@ -76,3 +84,22 @@ export async function updateIntervalAction(hours: number) {
     throw new Error("Failed to update interval");
   }
 }
+
+// Exported Actions
+export const fetchStatusAction = withAdminAuth(
+  "fetchSchedulerStatus",
+  fetchStatusInternal
+);
+
+export const triggerPipelineAction = withAdminAuth(
+  "triggerPipeline",
+  triggerPipelineInternal
+);
+
+export const updateIntervalAction = withAdminAuth(
+  "updateSchedulerInterval",
+  async (hours: number) => {
+    const validated = updateIntervalSchema.parse({ hours });
+    return updateIntervalInternal(validated.hours);
+  }
+);

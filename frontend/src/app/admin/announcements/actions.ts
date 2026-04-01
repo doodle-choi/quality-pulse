@@ -1,10 +1,26 @@
 "use server";
 
 import { INTERNAL_API_BASE_URL } from "@/config";
+import { withAdminAuth } from "@/utils/withAdminAuth";
+import { z } from "zod";
+import xss from "xss";
 
 const INTERNAL_API_KEY = process.env.INTERNAL_API_KEY || "";
 
-export async function saveAnnouncementAction(
+// Zod Schemas for Validation
+const saveAnnouncementSchema = z.object({
+  id: z.number().optional(),
+  title: z.string().min(1, "Title is required").max(100, "Title is too long"),
+  content: z.string().min(1, "Content is required"),
+  is_published: z.boolean().default(false),
+});
+
+const deleteAnnouncementSchema = z.object({
+  id: z.number().positive("Invalid announcement ID"),
+});
+
+// Original logic moved into private functions for wrapping
+async function saveAnnouncementInternal(
   id: number | undefined,
   title: string,
   content: string,
@@ -16,6 +32,10 @@ export async function saveAnnouncementAction(
       : `${INTERNAL_API_BASE_URL}/announcements`;
     const method = id ? "PUT" : "POST";
 
+    // Input Sanitization
+    const sanitizedTitle = xss(title);
+    const sanitizedContent = xss(content);
+
     const res = await fetch(url, {
       method,
       headers: {
@@ -23,8 +43,8 @@ export async function saveAnnouncementAction(
         "X-API-Key": INTERNAL_API_KEY,
       },
       body: JSON.stringify({
-        title,
-        content,
+        title: sanitizedTitle,
+        content: sanitizedContent,
         is_published,
       }),
     });
@@ -43,7 +63,7 @@ export async function saveAnnouncementAction(
   }
 }
 
-export async function deleteAnnouncementAction(id: number) {
+async function deleteAnnouncementInternal(id: number) {
   try {
     const res = await fetch(`${INTERNAL_API_BASE_URL}/announcements/${id}`, {
       method: "DELETE",
@@ -65,3 +85,37 @@ export async function deleteAnnouncementAction(id: number) {
     throw new Error("Failed to delete announcement");
   }
 }
+
+// Exported Actions wrapped with withAdminAuth and Zod validation
+export const saveAnnouncementAction = withAdminAuth(
+  "saveAnnouncement",
+  async (
+    id: number | undefined,
+    title: string,
+    content: string,
+    is_published: boolean
+  ) => {
+    // Validate input with Zod
+    const validated = saveAnnouncementSchema.parse({
+      id,
+      title,
+      content,
+      is_published,
+    });
+    return saveAnnouncementInternal(
+      validated.id,
+      validated.title,
+      validated.content,
+      validated.is_published
+    );
+  }
+);
+
+export const deleteAnnouncementAction = withAdminAuth(
+  "deleteAnnouncement",
+  async (id: number) => {
+    // Validate input with Zod
+    const validated = deleteAnnouncementSchema.parse({ id });
+    return deleteAnnouncementInternal(validated.id);
+  }
+);
