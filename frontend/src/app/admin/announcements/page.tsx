@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { MaterialIcon } from "@/components/ui/MaterialIcon";
+import { saveAnnouncementAction, deleteAnnouncementAction } from "./actions";
 
 interface Announcement {
   id: number;
@@ -43,29 +44,16 @@ export default function AnnouncementsPage() {
 
   const handleSave = async () => {
     try {
-      const url = currentAnnouncement.id
-        ? `/api/v1/announcements/${currentAnnouncement.id}`
-        : "/api/v1/announcements";
-      const method = currentAnnouncement.id ? "PUT" : "POST";
+      await saveAnnouncementAction(
+        currentAnnouncement.id,
+        currentAnnouncement.title || "",
+        currentAnnouncement.content || "",
+        currentAnnouncement.is_published || false
+      );
 
-      const res = await fetch(url, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-          "X-API-Key": "your_secure_internal_key", // TODO: better handling
-        },
-        body: JSON.stringify({
-          title: currentAnnouncement.title,
-          content: currentAnnouncement.content,
-          is_published: currentAnnouncement.is_published,
-        }),
-      });
-
-      if (res.ok) {
-        setIsEditing(false);
-        setCurrentAnnouncement({ title: "", content: "", is_published: false });
-        fetchAnnouncements();
-      }
+      setIsEditing(false);
+      setCurrentAnnouncement({ title: "", content: "", is_published: false });
+      fetchAnnouncements();
     } catch (error) {
       console.error("Failed to save announcement:", error);
     }
@@ -74,15 +62,8 @@ export default function AnnouncementsPage() {
   const handleDelete = async (id: number) => {
     if (!confirm("Are you sure you want to delete this announcement?")) return;
     try {
-      const res = await fetch(`/api/v1/announcements/${id}`, {
-        method: "DELETE",
-        headers: {
-          "X-API-Key": "your_secure_internal_key",
-        },
-      });
-      if (res.ok) {
-        fetchAnnouncements();
-      }
+      await deleteAnnouncementAction(id);
+      fetchAnnouncements();
     } catch (error) {
       console.error("Failed to delete announcement:", error);
     }
