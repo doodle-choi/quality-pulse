@@ -110,7 +110,7 @@ export default async function CrawlerLogsPage() {
                   {log.summary && (
                     <div className="hidden lg:block max-w-[400px]">
                       <p className="text-[12px] text-text-secondary line-clamp-2 leading-relaxed italic">
-                        "{log.summary}"
+                        &quot;{log.summary}&quot;
                       </p>
                     </div>
                   )}
