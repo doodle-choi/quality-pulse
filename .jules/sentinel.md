@@ -23,3 +23,7 @@
 **Vulnerability:** A hardcoded dummy API key (`"your_secure_internal_key"`) was used in client-side component `frontend/src/app/admin/announcements/page.tsx` for `fetch` calls to backend API. This exposes the API key logic to the frontend and could potentially leak the actual `INTERNAL_API_KEY` if it was replaced with the actual environment variable.
 **Learning:** Client components (`"use client"`) execute in the browser and should never contain sensitive secrets or direct calls to authenticated internal endpoints if they require a secret API key.
 **Prevention:** Always use Next.js Server Actions (`"use server"`) or dedicated API routes for operations requiring secrets. Server actions safely encapsulate the logic and use server-side environment variables without exposing them to the client bundle.
+## 2026-03-27 - [CRITICAL] Remove hardcoded admin credentials
+**Vulnerability:** The admin authentication logic in `frontend/src/auth.config.ts` used hardcoded credentials (`admin@example.com` and `admin123`).
+**Learning:** Hardcoded credentials in source code pose a critical security risk as they can be easily discovered and exploited, bypassing authentication mechanisms.
+**Prevention:** Always rely on secure environment variables (e.g., `process.env.ADMIN_EMAIL` and `process.env.ADMIN_PASSWORD`) for authentication credentials and ensure the system fails securely if these variables are missing.
