@@ -5,8 +5,8 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("admin@example.com");
-  const [password, setPassword] = useState("admin123");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
 
@@ -61,9 +61,6 @@ export default function LoginPage() {
             Sign In
           </button>
         </form>
-        <p className="mt-6 text-neutral-500 text-sm text-center">
-          Mock Credentials: admin@example.com / admin123
-        </p>
       </div>
     </div>
   );

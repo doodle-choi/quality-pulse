@@ -19,6 +19,11 @@
 **Vulnerability:** A hardcoded dummy API key (`"your_secure_internal_key"`) was used in client-side component `frontend/src/app/admin/announcements/page.tsx` for `fetch` calls to backend API. This exposes the API key logic to the frontend and could potentially leak the actual `INTERNAL_API_KEY` if it was replaced with the actual environment variable.
 **Learning:** Client components (`"use client"`) execute in the browser and should never contain sensitive secrets or direct calls to authenticated internal endpoints if they require a secret API key.
 **Prevention:** Always use Next.js Server Actions (`"use server"`) or dedicated API routes for operations requiring secrets. Server actions safely encapsulate the logic and use server-side environment variables without exposing them to the client bundle.
+
+## 2024-05-24 - [CRITICAL] Fix hardcoded admin credentials in NextAuth configuration
+**Vulnerability:** The `authorize` function in NextAuth's configuration (`frontend/src/auth.config.ts`) used hardcoded credentials (`admin@example.com` and `admin123`) for administrative authentication.
+**Learning:** Hardcoding credentials in source code exposes sensitive access to anyone who can view the repository or the deployed client bundle.
+**Prevention:** Never hardcode credentials. Always use environment variables (`process.env`) to securely inject sensitive information at runtime, and implement secure fallbacks (e.g., returning `null` if required variables are missing).
 ## 2025-02-25 - [Exposed Internal API Key in Client-Side Component]
 **Vulnerability:** A hardcoded dummy API key (`"your_secure_internal_key"`) was used in client-side component `frontend/src/app/admin/announcements/page.tsx` for `fetch` calls to backend API. This exposes the API key logic to the frontend and could potentially leak the actual `INTERNAL_API_KEY` if it was replaced with the actual environment variable.
 **Learning:** Client components (`"use client"`) execute in the browser and should never contain sensitive secrets or direct calls to authenticated internal endpoints if they require a secret API key.
