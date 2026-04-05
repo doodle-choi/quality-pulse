@@ -33,11 +33,18 @@ export const authConfig = {
   providers: [
     Credentials({
       async authorize(credentials) {
-        // Mocking admin login for now
-        // In a real application, you would check against your backend
-        if (credentials.email === "admin@example.com" && credentials.password === "admin123") {
-          return { id: "1", name: "Admin User", email: "admin@example.com", role: "ADMIN" };
+        const adminEmail = process.env.ADMIN_EMAIL;
+        const adminPassword = process.env.ADMIN_PASSWORD;
+
+        if (!adminEmail || !adminPassword) {
+          console.error("Missing ADMIN_EMAIL or ADMIN_PASSWORD in environment variables");
+          return null;
         }
+
+        if (credentials.email === adminEmail && credentials.password === adminPassword) {
+          return { id: "1", name: "Admin User", email: adminEmail, role: "ADMIN" };
+        }
+
         return null;
       },
     }),
