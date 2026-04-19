@@ -91,7 +91,7 @@ export function InsightBoardContainer({ initialIssues }: { initialIssues: IssueA
       {/* 3. Detailed Engineering Feed */}
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-[16px] font-bold text-text">Technical Insight Feed</h2>
+          <h2 className="text-lg font-bold text-text font-headline">Technical Insight Feed</h2>
           <span className="text-xs font-medium text-text-muted bg-surface-alt px-2.5 py-1 rounded-md border border-border">
             {filteredIssues.length} detailed matches
           </span>

@@ -106,7 +106,7 @@ export function Sidebar() {
           {NAV_ITEMS.map((group) => (
             <div key={group.label} className="mb-6">
               {isDesktopOpen ? (
-                <h3 className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] px-3 mb-2 opacity-50 whitespace-nowrap">
+                <h3 className="text-[11px] font-black text-text-muted uppercase tracking-[0.2em] px-3 mb-2 opacity-50 whitespace-nowrap">
                   {t(`navigation.${group.label}`, group.label)}
                 </h3>
               ) : (

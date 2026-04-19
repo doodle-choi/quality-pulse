@@ -54,7 +54,7 @@ export function IssueCard({ issue }: { issue: IssueAttr }) {
   return (
     <div 
       className={clsx(
-        "bg-surface border border-border rounded-xl overflow-hidden shadow-sm transition-all duration-200 hover:shadow-md cursor-pointer",
+        "bg-surface-lowest dark:bg-surface-container rounded-xl overflow-hidden transition-all duration-200 hover:bg-surface-high/30 cursor-pointer",
         severityBorderMap[issue.severity] || "border-l-4 border-l-border"
       )}
       onClick={() => setExpanded(!expanded)}
@@ -135,7 +135,7 @@ export function IssueCard({ issue }: { issue: IssueAttr }) {
             className="inline-flex items-center gap-2 text-[12px] text-primary font-bold hover:underline bg-primary/5 px-3 py-1.5 rounded-lg border border-primary/10 transition-colors"
             onClick={(e) => e.stopPropagation()}
           >
-            <MaterialIcon name="open_in_new" size="xs" /> 원본 출처 확인 (Original Source)
+            <MaterialIcon name="open_in_new" size="xs" /> Original Source
           </a>
         </div>
       )}

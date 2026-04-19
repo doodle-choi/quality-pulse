@@ -70,9 +70,9 @@ export function WorldMap({ issues, selectedRegion, onRegionClick }: WorldMapProp
   };
 
   return (
-    <div className="w-full h-[350px] sm:h-[450px] bg-surface border border-border rounded-xl shadow-sm overflow-hidden flex flex-col relative group">
+    <div className="w-full h-[350px] sm:h-[450px] bg-surface-lowest dark:bg-surface-container rounded-xl overflow-hidden flex flex-col relative group">
       <div className="absolute top-5 left-6 z-10 pointer-events-none">
-        <h3 className="text-[16px] font-bold text-text flex items-center gap-2">
+        <h3 className="text-lg font-bold text-text font-headline flex items-center gap-2">
           Global Risk Hotspots
           {selectedRegion && (
             <span className="text-[10px] bg-primary/20 text-primary px-2 py-0.5 rounded-full uppercase tracking-widest pointer-events-auto cursor-pointer" onClick={() => onRegionClick("")}>
@@ -158,15 +158,15 @@ export function WorldMap({ issues, selectedRegion, onRegionClick }: WorldMapProp
       <div className="absolute bottom-5 left-6 z-10 flex items-center gap-4 bg-surface/80 backdrop-blur-md px-3.5 py-2.5 rounded-xl border border-border shadow-sm">
         <div className="flex items-center gap-2">
           <div className="w-2.5 h-2.5 rounded-full bg-[var(--critical)] shadow-[0_0_8px_var(--critical)]"></div>
-          <span className="text-[10px] text-text-secondary font-bold uppercase tracking-wider">Critical</span>
+          <span className="text-[10px] text-text-muted font-bold uppercase tracking-wider">Critical</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-2.5 h-2.5 rounded-full bg-[var(--high)] shadow-[0_0_8px_var(--high)]"></div>
-          <span className="text-[10px] text-text-secondary font-bold uppercase tracking-wider">High</span>
+          <span className="text-[10px] text-text-muted font-bold uppercase tracking-wider">High</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-2.5 h-2.5 rounded-full bg-[var(--primary)] shadow-[0_0_8px_var(--primary)]"></div>
-          <span className="text-[10px] text-text-secondary font-bold uppercase tracking-wider">Active</span>
+          <span className="text-[10px] text-text-muted font-bold uppercase tracking-wider">Active</span>
         </div>
       </div>
     </div>
