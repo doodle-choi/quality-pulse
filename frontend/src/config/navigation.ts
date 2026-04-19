@@ -3,6 +3,7 @@ export interface NavItem {
   href: string;
   icon: string; // Material Symbols icon name
   badge?: string;
+  subItems?: { name: string; href: string }[];
 }
 
 export interface NavGroup {
@@ -14,7 +15,15 @@ export const NAV_ITEMS: NavGroup[] = [
   {
     label: "Overview",
     items: [
-      { name: "Dashboard", href: "/", icon: "dashboard" },
+      { 
+        name: "Dashboard", 
+        href: "/", 
+        icon: "dashboard",
+        subItems: [
+          { name: "Service Material Status", href: "/dashboard/materials" },
+          { name: "Quality Indicator Status", href: "/dashboard/quality" },
+        ]
+      },
     ]
   },
   {

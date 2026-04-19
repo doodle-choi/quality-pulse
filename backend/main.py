@@ -28,6 +28,12 @@ app = FastAPI(
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
+    """
+    전역 예외 처리 핸들러 (Global Exception Handler).
+    
+    처리되지 않은 Exception을 포착하여 500 에러 포맷으로 일관되게 반환하며, 
+    서버 로그에 Traceback을 기록함과 동시에 클라이언트에는 보안상 세부 에러를 노출하지 않습니다.
+    """
     if isinstance(exc, HTTPException):
         return JSONResponse(
             status_code=exc.status_code,
@@ -43,6 +49,12 @@ async def global_exception_handler(request: Request, exc: Exception):
 
 @app.middleware("http")
 async def add_security_headers(request: Request, call_next):
+    """
+    기본 HTTP Security Header 추가 미들웨어.
+    
+    모든 HTTP 응답에 강력한 보안 헤더(XSS 방지, HSTS, Clickjacking 방어, CSP 등)를 추가하여
+    알려진 웹 취약점을 선제적으로 방어합니다.
+    """
     response = await call_next(request)
     response.headers["X-Frame-Options"] = "DENY"
     response.headers["X-Content-Type-Options"] = "nosniff"
@@ -51,7 +63,9 @@ async def add_security_headers(request: Request, call_next):
     response.headers["Content-Security-Policy"] = "default-src 'self'; frame-ancestors 'none';"
     return response
 
-# CORS 설정 (개발 환경 포함)
+# CORS (Cross-Origin Resource Sharing) 글로벌 정책 설정
+# API와 프론트엔드의 도메인이 다를 때 접근을 허용하기 위한 미들웨어입니다.
+# settings.BACKEND_CORS_ORIGINS에 등록된 Origins에만 허용됩니다.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[

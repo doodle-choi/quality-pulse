@@ -2,6 +2,8 @@
   "navigation": {
     "Overview": "Overview",
     "Dashboard": "Dashboard",
+    "Service Material Status": "Service Material Status",
+    "Quality Indicator Status": "Quality Indicator Status",
     "Data Analyze": "Data Analyze",
     "Visual Analytics": "Visual Analytics",
     "Data Hub": "Data Hub",

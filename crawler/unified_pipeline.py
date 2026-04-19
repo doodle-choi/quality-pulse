@@ -27,6 +27,12 @@ MAX_CONCURRENT_SCRAPERS = 3  # Track A (Playwright) 동시 실행 한도
 scraper_semaphore = asyncio.Semaphore(MAX_CONCURRENT_SCRAPERS)
 
 class CrawlTracker:
+    """
+    통합 파이프라인(Crawl Job) 상태 추적기 클래스.
+    
+    백엔드(FastAPI)의 API를 통해 작업의 시작, 진행(실시간 로그 저장), 종료 상태를 동기화하여
+    DB 스키마(예: CrawlLog)에 흔적을 남기고 프론트엔드 대시보드에 프로그레스를 렌더링하도록 돕습니다.
+    """
     def __init__(self):
         self.api_base = os.getenv("API_BASE_URL", "http://localhost:8000/api/v1")
         self.job_id = None
@@ -77,6 +83,12 @@ class CrawlTracker:
             logger.warning(f"Failed to finish crawl log: {e}")
 
 async def process_track_a_target(target, tracker):
+    """
+    Track A: 웹사이트 HTML 딥 크롤링 트랙 (Playwright 기반 HTML -> Markdown)
+    
+    지정된 URL에서 페이지의 텍스트 콘텐츠를 추출한 후, 이전 스크래핑과 대비해 변경사항이 발생한 경우에만 
+    LLM(Google Gemini)으로 파싱하여 품질 이슈 객체 리스트를 추출하는 심층 분석 파이프라인.
+    """
     t_id = target["id"]
     url = target["url"]
     module = target["scraper_module"]
@@ -104,6 +116,12 @@ async def process_track_a_target(target, tracker):
     return []
 
 async def process_track_b_target(source, tracker):
+    """
+    Track B: Public API/데이터 피드 수집 트랙 (NewsAPI, Reddit, GDELT, CPSC API)
+    
+    정형/반정형 데이터 소스로부터 뉴스와 이벤트 JSON을 가져온 뒤, 대량의 항목을 일정 크기(Chunk) 단위로 
+    나누어 병렬 LLM 프롬프팅(gather)을 수행하여 정보 추출 속도를 획기적으로 개선한 파이프라인.
+    """
     s_id = source["id"]
     url = source["url"]
     fetcher = source["fetcher_module"]

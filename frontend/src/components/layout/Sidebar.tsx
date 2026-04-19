@@ -16,6 +16,15 @@ export function Sidebar() {
   const { isMobileOpen, setIsMobileOpen, isDesktopOpen, toggleDesktop } = useSidebar();
   const [nextRun, setNextRun] = useState<string | null>(null);
   const [schedulerActive, setSchedulerActive] = useState(false);
+  const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>({});
+
+  const toggleSubMenu = (e: React.MouseEvent, name: string, isCurrentlyActive: boolean) => {
+    e.preventDefault();
+    setExpandedMenus(prev => ({ 
+      ...prev, 
+      [name]: prev[name] !== undefined ? !prev[name] : !isCurrentlyActive 
+    }));
+  };
 
   useEffect(() => {
     const fetchScheduler = async () => {
@@ -61,15 +70,17 @@ export function Sidebar() {
               <MaterialIcon name="chevron_right" size="md" />
             </button>
           )}
-          <div className="w-10 h-10 shrink-0 bg-primary-container rounded-lg flex items-center justify-center">
-            <MaterialIcon name="analytics" filled className="text-tertiary-fixed" />
-          </div>
-          {isDesktopOpen && (
-            <div className="flex flex-col whitespace-nowrap overflow-hidden">
-              <h2 className="text-[17px] font-black tracking-tight text-text leading-tight">G-NEXUS</h2>
-              <p className="text-[9px] uppercase tracking-[0.2em] text-text-muted font-bold opacity-70">Global CS TEAM</p>
+          <Link href="/" className="flex items-center gap-3 shrink-0 group/logo">
+            <div className="w-10 h-10 shrink-0 bg-primary-container rounded-lg flex items-center justify-center group-hover/logo:bg-primary transition-colors">
+              <MaterialIcon name="analytics" filled className="text-tertiary-fixed group-hover/logo:text-on-primary" />
             </div>
-          )}
+            {isDesktopOpen && (
+              <div className="flex flex-col whitespace-nowrap overflow-hidden">
+                <h2 className="text-[17px] font-black tracking-tight text-text leading-tight group-hover/logo:text-primary transition-colors">G-NEXUS</h2>
+                <p className="text-[9px] uppercase tracking-[0.2em] text-text-muted font-bold opacity-70">Global CS TEAM</p>
+              </div>
+            )}
+          </Link>
           {/* Desktop Toggle */}
           {isDesktopOpen && (
             <button
@@ -104,30 +115,73 @@ export function Sidebar() {
               {group.items.map((item) => {
                 const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
                 const isPlaceholder = item.href === "#";
+                const hasSubItems = item.subItems && item.subItems.length > 0;
+                const isExpanded = expandedMenus[item.name] !== undefined ? expandedMenus[item.name] : isActive;
+
                 return (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className={clsx(
-                      clsx("group flex items-center rounded-xl text-[13px] transition-all duration-200", isDesktopOpen ? "gap-3 px-3 py-2.5" : "justify-center p-2 mb-1"),
-                      isActive
-                        ? "bg-surface-highest text-text shadow-sm border border-border-ghost/5"
-                        : isPlaceholder
-                          ? "text-text-muted/40 cursor-default"
-                          : "text-text-muted hover:text-text hover:bg-surface-high/50"
+                  <div key={item.name} className="flex flex-col w-full">
+                    <div
+                      className={clsx(
+                        clsx("group flex items-center rounded-xl text-[13px] transition-all duration-200", isDesktopOpen ? "pr-2" : "justify-center mb-1"),
+                        isActive && !hasSubItems
+                          ? "bg-surface-highest text-text shadow-sm border border-border-ghost/5"
+                          : isExpanded && hasSubItems 
+                            ? "bg-surface-high/40 text-text"
+                            : isPlaceholder
+                              ? "text-text-muted/40"
+                              : "text-text-muted hover:text-text hover:bg-surface-high/50"
+                      )}
+                    >
+                      <Link
+                        href={item.href}
+                        className={clsx("flex items-center flex-1", isDesktopOpen ? "gap-3 pl-3 py-2.5" : "justify-center p-2")}
+                        onClick={isPlaceholder ? (e) => e.preventDefault() : undefined}
+                      >
+                        <MaterialIcon name={item.icon} size="md" />
+                        {isDesktopOpen && (
+                          <span className={clsx("font-headline whitespace-nowrap flex-1", (isActive && !hasSubItems) || (isExpanded && hasSubItems) ? "font-bold" : "font-semibold")}>
+                            {t(`navigation.${item.name}`, item.name)}
+                          </span>
+                        )}
+                        {item.badge && isDesktopOpen && !hasSubItems && (
+                          <span className="ml-auto px-2 py-0.5 mr-2 rounded-full text-[9px] font-black uppercase bg-primary/10 text-primary border border-primary/5">
+                            {t(`badges.${item.badge}`, item.badge)}
+                          </span>
+                        )}
+                      </Link>
+
+                      {hasSubItems && isDesktopOpen && (
+                        <button
+                          onClick={(e) => toggleSubMenu(e, item.name, isActive)}
+                          className="p-1 hover:bg-surface-high rounded-md transition-colors active:scale-95 ml-1 mr-1"
+                        >
+                          <MaterialIcon name={isExpanded ? "expand_less" : "expand_more"} size="sm" className="opacity-50" />
+                        </button>
+                      )}
+                    </div>
+                    
+                    {/* Accordion Sub Menu */}
+                    {hasSubItems && isExpanded && isDesktopOpen && (
+                      <div className="flex flex-col gap-1 mt-1 mb-2 ml-10 border-l-2 border-border-ghost/10 pl-2 relative">
+                        {item.subItems!.map(sub => {
+                          const isSubActive = pathname === sub.href;
+                          return (
+                            <Link
+                              key={sub.name}
+                              href={sub.href}
+                              className={clsx(
+                                "flex items-center text-[12px] py-1.5 px-3 rounded-lg transition-all relative font-headline",
+                                isSubActive ? "text-primary bg-primary/5 font-bold" : "text-text-muted hover:text-text hover:bg-surface-high/50"
+                              )}
+                            >
+                              {isSubActive && <div className="absolute left-[-10px] top-1/2 -translate-y-1/2 w-1.5 h-3 bg-primary rounded-r-md" />}
+                              {t(`navigation.${sub.name}`, sub.name)}
+                            </Link>
+                          );
+                        })}
+                      </div>
                     )}
-                    onClick={isPlaceholder ? (e) => e.preventDefault() : undefined}
-                  >
-                    <MaterialIcon name={item.icon} size="md" />
-                    {isDesktopOpen && (
-                      <span className={clsx("font-headline whitespace-nowrap", isActive ? "font-bold" : "font-semibold")}>{t(`navigation.${item.name}`, item.name)}</span>
-                    )}
-                    {item.badge && isDesktopOpen && (
-                      <span className="ml-auto px-2 py-0.5 rounded-full text-[9px] font-black uppercase bg-primary/10 text-primary border border-primary/5">
-                        {t(`badges.${item.badge}`, item.badge)}
-                      </span>
-                    )}
-                  </Link>
+                  </div>
                 );
               })}
             </div>
