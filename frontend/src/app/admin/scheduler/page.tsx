@@ -1,10 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { 
-  RefreshCw, Play, Clock, Settings2, CheckCircle2, 
-  AlertTriangle, Loader2, Timer, Zap 
-} from "lucide-react";
+import { MaterialIcon } from "@/components/ui/MaterialIcon";
 import { triggerPipelineAction, updateIntervalAction, fetchStatusAction } from "./actions";
 
 interface SchedulerStatus {
@@ -74,7 +71,7 @@ export default function SchedulerPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <Loader2 className="animate-spin text-primary" size={32} />
+        <MaterialIcon name="refresh" className="animate-spin text-primary !text-4xl" />
       </div>
     );
   }
@@ -83,8 +80,8 @@ export default function SchedulerPage() {
     <div className="flex flex-col gap-6 animate-in fade-in duration-500">
       {/* Header */}
       <div>
-        <h1 className="text-[20px] font-black tracking-tight text-text">Scheduler & Sync Control</h1>
-        <p className="text-[13px] font-medium text-text-muted mt-1">
+        <h1 className="text-2xl font-extrabold tracking-tight text-text font-headline">Scheduler & Sync Control</h1>
+        <p className="text-sm font-medium text-text-muted mt-1">
           Manage automated pipeline execution and manual data synchronization
         </p>
       </div>
@@ -92,12 +89,12 @@ export default function SchedulerPage() {
       {/* Status Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Scheduler Status */}
-        <div className="bg-surface border border-border rounded-xl p-5 shadow-sm">
+        <div className="bg-surface-lowest dark:bg-surface-container rounded-xl p-5 hover:bg-surface-high/30 transition-colors">
           <div className="flex items-center gap-3 mb-4">
             <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
               status?.is_running ? 'bg-green-500/10 text-green-500' : 'bg-critical/10 text-critical'
             }`}>
-              {status?.is_running ? <CheckCircle2 size={20} /> : <AlertTriangle size={20} />}
+              {status?.is_running ? <MaterialIcon name="check_circle" size="md" /> : <MaterialIcon name="warning" size="md" />}
             </div>
             <div>
               <p className="text-[10px] font-black text-text-muted uppercase tracking-wider">Engine Status</p>
@@ -117,10 +114,10 @@ export default function SchedulerPage() {
         </div>
 
         {/* Next Run */}
-        <div className="bg-surface border border-border rounded-xl p-5 shadow-sm">
+        <div className="bg-surface-lowest dark:bg-surface-container rounded-xl p-5 hover:bg-surface-high/30 transition-colors">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-              <Timer size={20} />
+              <MaterialIcon name="timer" size="md" />
             </div>
             <div>
               <p className="text-[10px] font-black text-text-muted uppercase tracking-wider">Next Scheduled Run</p>
@@ -134,10 +131,10 @@ export default function SchedulerPage() {
         </div>
 
         {/* Interval */}
-        <div className="bg-surface border border-border rounded-xl p-5 shadow-sm">
+        <div className="bg-surface-lowest dark:bg-surface-container rounded-xl p-5 hover:bg-surface-high/30 transition-colors">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary">
-              <Clock size={20} />
+              <MaterialIcon name="schedule" size="md" />
             </div>
             <div>
               <p className="text-[10px] font-black text-text-muted uppercase tracking-wider">Repeat Interval</p>
@@ -152,10 +149,10 @@ export default function SchedulerPage() {
       {/* Action Panel */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Manual Trigger */}
-        <div className="bg-surface border border-border rounded-xl overflow-hidden shadow-sm">
-          <div className="bg-surface-alt/50 px-5 py-3 border-b border-border">
+        <div className="bg-surface-lowest dark:bg-surface-container rounded-xl overflow-hidden">
+          <div className="bg-surface-alt/50 px-5 py-3 border-b border-border-ghost/10">
             <h3 className="text-[12px] font-black text-text-muted uppercase tracking-widest flex items-center gap-2">
-              <Zap size={14} /> Manual Sync
+              <MaterialIcon name="bolt" size="sm" /> Manual Sync
             </h3>
           </div>
           <div className="p-6 flex flex-col gap-4">
@@ -166,16 +163,16 @@ export default function SchedulerPage() {
             <button 
               onClick={handleTrigger}
               disabled={triggering}
-              className="flex items-center justify-center gap-2 px-5 py-3 rounded-lg bg-primary text-white font-bold text-sm transition-all hover:brightness-110 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+              className="flex items-center justify-center gap-2 px-5 py-3 rounded-lg bg-primary text-on-primary font-bold text-sm transition-all hover:brightness-110 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
             >
               {triggering ? (
-                <><Loader2 size={16} className="animate-spin" /> Running...</>
+                <><MaterialIcon name="refresh" size="sm" className="animate-spin" /> Running...</>
               ) : (
-                <><Play size={16} /> Run Pipeline Now</>
+                <><MaterialIcon name="play_arrow" size="sm" /> Run Pipeline Now</>
               )}
             </button>
             {triggerMessage && (
-              <div className="text-[12px] font-medium text-green-500 bg-green-500/10 px-3 py-2 rounded-lg border border-green-500/20 animate-in fade-in">
+              <div className="text-[12px] font-medium text-green-500 bg-green-500/10 px-3 py-2 rounded-lg translate-y-2 animate-in fade-in">
                 {triggerMessage}
               </div>
             )}
@@ -183,10 +180,10 @@ export default function SchedulerPage() {
         </div>
 
         {/* Schedule Config */}
-        <div className="bg-surface border border-border rounded-xl overflow-hidden shadow-sm">
-          <div className="bg-surface-alt/50 px-5 py-3 border-b border-border">
+        <div className="bg-surface-lowest dark:bg-surface-container rounded-xl overflow-hidden">
+          <div className="bg-surface-alt/50 px-5 py-3 border-b border-border-ghost/10">
             <h3 className="text-[12px] font-black text-text-muted uppercase tracking-widest flex items-center gap-2">
-              <Settings2 size={14} /> Schedule Configuration
+              <MaterialIcon name="settings" size="sm" /> Schedule Configuration
             </h3>
           </div>
           <div className="p-6 flex flex-col gap-4">
@@ -202,7 +199,7 @@ export default function SchedulerPage() {
                 min={1} max={168} 
                 value={newInterval}
                 onChange={(e) => setNewInterval(Number(e.target.value))}
-                className="w-20 px-3 py-2 bg-surface-alt border border-border rounded-lg text-text text-sm font-mono font-bold text-center focus:outline-none focus:border-primary transition-colors"
+                className="w-20 px-3 py-2 bg-surface-alt border border-border-ghost/10 rounded-lg text-text text-sm font-mono font-bold text-center focus:outline-none focus:ring-1 focus:ring-primary transition-all"
               />
               <span className="text-[12px] font-bold text-text-muted uppercase tracking-wider">Hours</span>
             </div>
@@ -214,7 +211,7 @@ export default function SchedulerPage() {
                   className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all border ${
                     newInterval === h 
                       ? 'bg-primary/10 text-primary border-primary/30' 
-                      : 'bg-surface-alt text-text-muted border-border hover:border-primary/20'
+                      : 'bg-surface-alt text-text-muted border-border-ghost/10 hover:border-primary/20'
                   }`}
                 >
                   {h}h
@@ -224,9 +221,9 @@ export default function SchedulerPage() {
             <button 
               onClick={handleIntervalUpdate}
               disabled={status?.interval_hours === newInterval}
-              className="flex items-center justify-center gap-2 px-5 py-3 rounded-lg bg-surface-alt border border-border text-text font-bold text-sm transition-all hover:border-primary/30 hover:bg-primary/5 active:scale-[0.98] disabled:opacity-30 disabled:cursor-not-allowed"
+              className="flex items-center justify-center gap-2 px-5 py-3 rounded-lg bg-surface-alt border border-border-ghost/10 text-text font-bold text-sm transition-all hover:border-primary/30 hover:bg-primary/5 active:scale-[0.98] disabled:opacity-30 disabled:cursor-not-allowed"
             >
-              <RefreshCw size={16} /> Update Schedule
+              <MaterialIcon name="sync" size="sm" /> Update Schedule
             </button>
           </div>
         </div>

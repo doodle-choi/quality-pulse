@@ -56,27 +56,27 @@ export function ComponentMatrix({ issues, onComponentClick, selectedComponent }:
       case "Critical": return "bg-critical/10 border-critical/30 text-critical hover:bg-critical/20";
       case "High": return "bg-high/10 border-high/30 text-high hover:bg-high/20";
       case "Medium": return "bg-primary/10 border-primary/30 text-primary hover:bg-primary/20";
-      default: return "bg-surface-alt border-border text-text-secondary hover:bg-surface-alt/80";
+      default: return "bg-surface-alt border-border-ghost/10 text-text-muted hover:bg-surface-alt/80";
     }
   };
 
   if (componentStats.length === 0) {
     return (
-      <div className="bg-surface border border-border rounded-xl p-6 shadow-sm flex flex-col items-center justify-center h-[200px] text-center">
+      <div className="bg-surface-lowest dark:bg-surface-container rounded-xl p-6 flex flex-col items-center justify-center h-[200px] text-center">
         <div className="w-12 h-12 rounded-full bg-surface-alt flex items-center justify-center mb-3">
           <span className="text-text-muted font-mono text-xs">N/A</span>
         </div>
-        <p className="text-[13px] font-bold text-text-secondary">No Component Data Yet</p>
+        <p className="text-[13px] font-bold text-text-muted">No Component Data Yet</p>
         <p className="text-[11px] text-text-muted mt-1 max-w-[250px]">The AI is waiting for new incidents to extract specific component failures.</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-surface border border-border rounded-xl p-5 shadow-sm flex flex-col gap-4">
+    <div className="bg-surface-lowest dark:bg-surface-container rounded-xl p-5 flex flex-col gap-4">
       <div className="flex items-center justify-between border-b border-border-light pb-3">
         <div className="flex flex-col">
-          <h3 className="text-[14px] font-black text-text flex items-center gap-2">
+          <h3 className="text-lg font-bold text-text font-headline flex items-center gap-2">
             Component Risk Matrix
             <span className="text-[9px] bg-primary/10 text-primary px-1.5 py-0.5 rounded uppercase tracking-widest">SBOM</span>
           </h3>
@@ -85,7 +85,7 @@ export function ComponentMatrix({ issues, onComponentClick, selectedComponent }:
         {selectedComponent && (
           <button 
             onClick={() => onComponentClick("")}
-            className="text-[10px] font-bold text-text-secondary hover:text-text bg-surface-alt px-2 py-1 rounded"
+            className="text-[10px] font-bold text-text-muted hover:text-text bg-surface-alt px-2 py-1 rounded"
           >
             Clear Filter
           </button>

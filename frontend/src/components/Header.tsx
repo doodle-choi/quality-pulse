@@ -155,7 +155,7 @@ export function Header() {
         <div className="flex items-center gap-3 pl-1 hidden sm:flex">
           <div className="text-right">
             <p className="text-xs font-bold text-text">Alex Sterling</p>
-            <p className="text-[10px] text-text-muted font-medium">Lead Architect</p>
+            <p className="text-[11px] text-text-muted font-medium">Lead Architect</p>
           </div>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img

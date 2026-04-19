@@ -27,6 +27,7 @@ export const MOCK_KPI_STATS = [
     changeType: "positive" as const,
     icon: "trending_up",
     progress: 72, // percent
+    sparklineData: [450, 520, 500, 680, 650, 780, 842.5]
   },
   {
     label: "Target vs Achievement",
@@ -36,6 +37,7 @@ export const MOCK_KPI_STATS = [
     changeType: "negative" as const,
     icon: "track_changes",
     progress: 75,
+    sparklineData: [95.0, 94.8, 95.2, 94.0, 93.5, 92.8, 92.4]
   },
   {
     label: "Projected Estimate",
@@ -45,6 +47,7 @@ export const MOCK_KPI_STATS = [
     changeType: "neutral" as const,
     icon: "insights",
     note: "Expected completion within 14 business days.",
+    sparklineData: [1.10, 1.15, 1.12, 1.18, 1.20, 1.25, 1.28]
   },
 ];
 
@@ -53,6 +56,8 @@ export const MOCK_REGIONAL_DATA = [
   { region: "NA", percentage: 85 },
   { region: "EMEA", percentage: 62 },
   { region: "APAC", percentage: 44 },
+  { region: "LATAM", percentage: 28 },
+  { region: "ROW", percentage: 11 }
 ];
 
 // === Recent Architectural Events (Activity List) ===
@@ -65,17 +70,38 @@ export const MOCK_EVENTS = [
     statusType: "success" as const,
   },
   {
-    title: "Latency Peak - Node 04",
-    subtitle: "Occurred 45 minutes ago",
+    title: "Anomaly Defect Rate Surge",
+    subtitle: "Detected 45 minutes ago in Central DB",
     icon: "warning",
     status: "CRITICAL",
     statusType: "error" as const,
   },
   {
     title: "Master Data Indexing",
-    subtitle: "Ongoing process",
+    subtitle: "Ongoing process globally",
     icon: "database",
     status: "PENDING",
     statusType: "neutral" as const,
   },
+  {
+    title: "Model Drift Calibration",
+    subtitle: "Completed 2 hours ago",
+    icon: "model_training",
+    status: "STABLE",
+    statusType: "success" as const,
+  },
+  {
+    title: "API Rate Limit Warning",
+    subtitle: "External scraper node restricted",
+    icon: "report_problem",
+    status: "ELEVATED",
+    statusType: "error" as const,
+  },
+  {
+    title: "Data Quality Engine Refresh",
+    subtitle: "Scheduled in 4 hours",
+    icon: "schedule",
+    status: "QUEUED",
+    statusType: "neutral" as const,
+  }
 ];

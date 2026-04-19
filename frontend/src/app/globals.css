@@ -173,6 +173,7 @@
   /* Typography */
   --color-text: var(--on-surface);
   --color-text-muted: var(--on-surface-variant);
+  --color-text-secondary: var(--on-surface-variant);
   --color-outline: var(--outline);
   --color-border: var(--border);
   --color-border-light: var(--border-light);
@@ -275,5 +276,28 @@ h1, h2, h3, .font-headline {
 
 .sidebar-scroll::-webkit-scrollbar-thumb:hover {
   background: var(--outline);
+}
+
+/* Premium Main Content Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--outline-variant);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--outline);
+}
+
+/* On-Surface Variant color alias for Tailwind */
+.text-on-surface-variant {
+  color: var(--on-surface-variant);
 }
 
