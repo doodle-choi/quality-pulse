@@ -16,12 +16,21 @@ export const NAV_ITEMS: NavGroup[] = [
     label: "Overview",
     items: [
       { 
-        name: "Dashboard", 
+        name: "Quality Operations", 
         href: "/", 
         icon: "dashboard",
         subItems: [
           { name: "Service Material Status", href: "/dashboard/materials" },
           { name: "Quality Indicator Status", href: "/dashboard/quality" },
+        ]
+      },
+      { 
+        name: "Business Strategy", 
+        href: "/strategy/performance", 
+        icon: "insights",
+        subItems: [
+          { name: "Action Item Progress", href: "/strategy/action-items" },
+          { name: "Execution Details", href: "/strategy/details" },
         ]
       },
     ]
