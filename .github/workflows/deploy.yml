@@ -93,17 +93,20 @@ jobs:
             # 2. Aggressive Disk Cleanup (Crucial for small droplets)
             docker system prune -f
             
-            # 3. Handle Repository Synchronization
-            if [ ! -d "$PROJECT_DIR" ]; then
+            # 3. Handle Repository Synchronization (Self-healing)
+            if [ ! -d "$PROJECT_DIR/.git" ]; then
+              echo "Repo not found or broken. Re-cloning..."
+              rm -rf "$PROJECT_DIR"
               mkdir -p "$(dirname "$PROJECT_DIR")"
               git clone https://github.com/${{ github.repository }}.git "$PROJECT_DIR"
             fi
             cd "$PROJECT_DIR"
             
-            # 4. Handle Branch Switching and Pulling
+            # 4. Handle Branch Synchronization (Force Update)
             git config --global --add safe.directory "$PROJECT_DIR"
-            git fetch origin
-            git checkout ${{ github.ref_name }}
+            git fetch --all
+            git checkout -f ${{ github.ref_name }}
+            git reset --hard origin/${{ github.ref_name }}
             git pull origin ${{ github.ref_name }}
             
             # 5. Production Rollout
