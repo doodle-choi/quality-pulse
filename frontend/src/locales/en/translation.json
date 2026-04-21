@@ -19,7 +19,11 @@
     "Source Monitor": "Source Monitor",
     "Triage Agent": "Triage Agent",
     "Crawler Logs": "Crawler Logs",
-    "Scheduler / Sync": "Scheduler / Sync"
+    "Scheduler / Sync": "Scheduler / Sync",
+    "Announcements": "Announcements",
+    "Visual Lab": "Visual Lab",
+    "Metabase": "Metabase",
+    "Superset": "Superset"
   },
   "header": {
     "Search placeholder": "Search analytics...",
