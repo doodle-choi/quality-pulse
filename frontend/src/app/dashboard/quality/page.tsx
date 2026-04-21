@@ -171,6 +171,70 @@ export default function QualityPage() {
 
         </div>
       </div>
+
+      {/* Raw Data Tables Section */}
+      <div className="mt-6 flex flex-col gap-4">
+        <h3 className="font-black text-lg text-text tracking-tight flex items-center gap-2">
+          <MaterialIcon name="table_chart" className="text-primary" />
+          Raw Data Explorer ({metric.replace('_', ' ').toUpperCase()})
+        </h3>
+        
+        <div 
+          className="grid grid-cols-1 gap-6 items-start"
+          style={{ gridTemplateColumns: `repeat(auto-fit, minmax(300px, 1fr))` }}
+        >
+          {chartData.series.map(yearData => {
+            const targetEntry = chartData.targets.find(t => t.year === yearData.year);
+            const targetVal = targetEntry?.value || 0;
+
+            return (
+              <div key={yearData.year} className="bg-surface-low border border-border-ghost/10 rounded-2xl overflow-hidden shadow-sm flex flex-col max-h-[400px]">
+                <div className="bg-surface px-4 py-3 border-b border-border-ghost/10 flex justify-between items-center sticky top-0 z-10">
+                  <h4 className="font-bold text-sm text-text">{yearData.year} Data</h4>
+                  <span className="text-xs font-semibold text-text-muted bg-surface-high px-2 py-1 rounded-md">
+                    Target: {targetVal.toFixed(2)}
+                  </span>
+                </div>
+                <div className="overflow-y-auto flex-1 p-0">
+                  <table className="w-full text-left text-sm whitespace-nowrap">
+                    <thead className="bg-surface-high/30 sticky top-0 z-10">
+                      <tr>
+                        <th className="px-4 py-3 font-semibold text-text-muted text-xs uppercase tracking-wider">Period</th>
+                        <th className="px-4 py-3 font-semibold text-text-muted text-xs uppercase tracking-wider text-right">Value</th>
+                        <th className="px-4 py-3 font-semibold text-text-muted text-xs uppercase tracking-wider text-center">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border-ghost/5">
+                      {yearData.data.map((row, idx) => {
+                        const isUnderTarget = metric === 'total_issues' || metric === 'resolution_time' || metric === 'defect_rate' 
+                          ? row.value <= targetVal 
+                          : row.value >= targetVal;
+                        
+                        return (
+                          <tr key={idx} className="hover:bg-surface-high/30 transition-colors">
+                            <td className="px-4 py-2.5 font-medium text-text">{row.date} {row.isProjected && <span className="text-[10px] text-primary ml-1">(Est)</span>}</td>
+                            <td className="px-4 py-2.5 text-right font-mono text-text">{row.value.toFixed(2)}</td>
+                            <td className="px-4 py-2.5 text-center">
+                              {row.isProjected ? (
+                                <span className={clsx("text-xs font-bold", isUnderTarget ? "text-green-500/70" : "text-amber-500/70")}>-</span>
+                              ) : isUnderTarget ? (
+                                <span className="inline-flex items-center text-green-500"><MaterialIcon name="check_circle" size="sm" /></span>
+                              ) : (
+                                <span className="inline-flex items-center text-red-500"><MaterialIcon name="warning" size="sm" /></span>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
     </div>
   );
 }
