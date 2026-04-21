@@ -13,7 +13,7 @@ export interface NavGroup {
 
 export const NAV_ITEMS: NavGroup[] = [
   {
-    label: "Overview",
+    label: "Dashboard",
     items: [
       { 
         name: "Quality Operations", 

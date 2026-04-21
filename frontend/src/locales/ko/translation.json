@@ -1,6 +1,6 @@
 {
   "navigation": {
-    "Overview": "개요",
+    "Dashboard": "대시보드",
     "Quality Operations": "품질 운영",
     "Business Strategy": "사업 전략",
     "Action Item Progress": "액션 아이템 진행 현황",
@@ -8,7 +8,6 @@
     "Service Material Status": "서비스 자재 현황",
     "Quality Indicator Status": "품질 지표 현황",
     "Data Analyze": "데이터 분석",
-    "Visual Lab": "시각화 실험실",
     "Data Hub": "데이터 허브",
     "AI Risk Forecast": "AI 리스크 예측",
     "World Issues": "세계 이슈",

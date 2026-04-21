@@ -16,16 +16,44 @@ export function Sidebar() {
   const { isMobileOpen, setIsMobileOpen, isDesktopOpen, toggleDesktop } = useSidebar();
   const [nextRun, setNextRun] = useState<string | null>(null);
   const [schedulerActive, setSchedulerActive] = useState(false);
-  const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>({});
+  const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>(() => {
+    const initial: Record<string, boolean> = {};
+    NAV_ITEMS.forEach(group => {
+      group.items.forEach(item => {
+        if (item.subItems && item.subItems.length > 0) {
+          initial[item.name] = true;
+        }
+      });
+    });
+    return initial;
+  });
 
-  const toggleSubMenu = (e: React.UIEvent, name: string, isCurrentlyActive: boolean, preventDefault = true) => {
-    if (preventDefault) e.preventDefault();
+  const toggleSubMenu = (e: React.UIEvent, name: string) => {
+    e.preventDefault();
     e.stopPropagation();
     setExpandedMenus(prev => ({ 
       ...prev, 
-      [name]: prev[name] !== undefined ? !prev[name] : !isCurrentlyActive 
+      [name]: !prev[name] 
     }));
   };
+
+  // Sync expanded state with current path (Auto-expand on navigation, but never auto-collapse)
+  useEffect(() => {
+    NAV_ITEMS.forEach(group => {
+      group.items.forEach(item => {
+        const isSubActive = !!item.subItems?.some(sub => pathname === sub.href);
+        const isActiveParent = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href)) || isSubActive;
+        
+        if (isActiveParent && item.subItems && item.subItems.length > 0) {
+          setExpandedMenus(prev => {
+            // Only update if not already true to avoid unnecessary re-renders
+            if (prev[item.name]) return prev;
+            return { ...prev, [item.name]: true };
+          });
+        }
+      });
+    });
+  }, [pathname]);
 
   useEffect(() => {
     const fetchScheduler = async () => {
@@ -118,7 +146,7 @@ export function Sidebar() {
                 const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href)) || isSubItemActive;
                 const isPlaceholder = item.href === "#";
                 const hasSubItems = item.subItems && item.subItems.length > 0;
-                const isExpanded = expandedMenus[item.name] !== undefined ? expandedMenus[item.name] : (isActive || isSubItemActive);
+                const isExpanded = !!expandedMenus[item.name];
 
                 return (
                   <div key={item.name} className="flex flex-col w-full">
@@ -138,11 +166,7 @@ export function Sidebar() {
                         href={item.href}
                         className={clsx("flex items-center flex-1", isDesktopOpen ? "gap-3 pl-3 py-2.5" : "justify-center p-2")}
                         onClick={(e) => {
-                          if (hasSubItems && isDesktopOpen) {
-                            // If it's a placeholder, prevent default to avoid scrolling/refresh
-                            // If it's a real link (Dashboard '/'), don't prevent default so it navigates
-                            toggleSubMenu(e, item.name, isActive, isPlaceholder);
-                          } else if (isPlaceholder) {
+                          if (isPlaceholder) {
                             e.preventDefault();
                           }
                         }}
@@ -162,7 +186,7 @@ export function Sidebar() {
 
                       {hasSubItems && isDesktopOpen && (
                         <button
-                          onClick={(e) => toggleSubMenu(e, item.name, isActive)}
+                          onClick={(e) => toggleSubMenu(e, item.name)}
                           className="p-1 hover:bg-surface-high rounded-md transition-colors active:scale-95 ml-1 mr-1"
                         >
                           <MaterialIcon name={isExpanded ? "expand_less" : "expand_more"} size="sm" className="opacity-50" />
