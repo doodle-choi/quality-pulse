@@ -2,7 +2,6 @@
   "navigation": {
     "Dashboard": "Dashboard",
     "Quality Operations": "Quality Operations",
-    "Business Strategy": "Business Strategy",
     "Action Item Progress": "Action Item Progress",
     "Execution Details": "Execution Details",
     "Service Material Status": "Service Material Status",
@@ -23,7 +22,8 @@
     "Announcements": "Announcements",
     "Visual Lab": "Visual Lab",
     "Metabase": "Metabase",
-    "Superset": "Superset"
+    "Superset": "Superset",
+    "Business Structural Improvement": "Business Structural Improvement"
   },
   "header": {
     "Search placeholder": "Search analytics...",
@@ -60,5 +60,8 @@
     "Regional Distribution": "Regional Distribution",
     "Recent Quality Events": "Recent Quality Events",
     "Filter": "Filter"
+  },
+  "strategy": {
+    "performanceTitle": "Business Strategy Improvement Action Item and Plan"
   }
 }
