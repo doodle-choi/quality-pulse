@@ -16,7 +16,17 @@ export function Sidebar() {
   const { isMobileOpen, setIsMobileOpen, isDesktopOpen, toggleDesktop } = useSidebar();
   const [nextRun, setNextRun] = useState<string | null>(null);
   const [schedulerActive, setSchedulerActive] = useState(false);
-  const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>({});
+  const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>(() => {
+    const initial: Record<string, boolean> = {};
+    NAV_ITEMS.forEach(group => {
+      group.items.forEach(item => {
+        if (item.subItems && item.subItems.length > 0) {
+          initial[item.name] = true;
+        }
+      });
+    });
+    return initial;
+  });
 
   const toggleSubMenu = (e: React.UIEvent, name: string) => {
     e.preventDefault();
