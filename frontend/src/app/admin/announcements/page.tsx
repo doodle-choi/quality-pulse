@@ -81,7 +81,7 @@ export default function AnnouncementsPage() {
             setCurrentAnnouncement({ title: "", content: "", is_published: false });
             setIsEditing(true);
           }}
-          className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-content rounded-lg font-medium hover:bg-primary/90 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-primary text-on-primary rounded-lg font-medium hover:bg-primary/90 transition-colors"
         >
           <MaterialIcon name="add" className="!text-lg" />
           <span>New Announcement</span>
@@ -135,7 +135,7 @@ export default function AnnouncementsPage() {
               <button
                 onClick={handleSave}
                 disabled={!currentAnnouncement.title || !currentAnnouncement.content}
-                className="px-4 py-2 bg-primary text-primary-content rounded-lg font-medium hover:bg-primary/90 transition-colors disabled:opacity-50"
+                className="px-4 py-2 bg-primary text-on-primary rounded-lg font-medium hover:bg-primary/90 transition-colors disabled:opacity-50"
               >
                 Save Announcement
               </button>

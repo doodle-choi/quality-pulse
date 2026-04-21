@@ -1,7 +1,10 @@
 {
   "navigation": {
     "Overview": "Overview",
-    "Dashboard": "Dashboard",
+    "Quality Operations": "Quality Operations",
+    "Business Strategy": "Business Strategy",
+    "Action Item Progress": "Action Item Progress",
+    "Execution Details": "Execution Details",
     "Service Material Status": "Service Material Status",
     "Quality Indicator Status": "Quality Indicator Status",
     "Data Analyze": "Data Analyze",

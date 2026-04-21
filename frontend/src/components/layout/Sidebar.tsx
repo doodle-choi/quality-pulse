@@ -114,7 +114,7 @@ export function Sidebar() {
                 <div className="h-4" />
               )}
               {group.items.map((item) => {
-                const isSubItemActive = item.subItems?.some(sub => pathname === sub.href);
+                const isSubItemActive = !!item.subItems?.some(sub => pathname === sub.href);
                 const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href)) || isSubItemActive;
                 const isPlaceholder = item.href === "#";
                 const hasSubItems = item.subItems && item.subItems.length > 0;

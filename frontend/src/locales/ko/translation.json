@@ -1,7 +1,10 @@
 {
   "navigation": {
     "Overview": "개요",
-    "Dashboard": "대시보드",
+    "Quality Operations": "품질 운영",
+    "Business Strategy": "사업 전략",
+    "Action Item Progress": "액션 아이템 진행 현황",
+    "Execution Details": "상세 실행 내역",
     "Service Material Status": "서비스 자재 현황",
     "Quality Indicator Status": "품질 지표 현황",
     "Data Analyze": "데이터 분석",
