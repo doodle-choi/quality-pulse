@@ -18,8 +18,9 @@ export function Sidebar() {
   const [schedulerActive, setSchedulerActive] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>({});
 
-  const toggleSubMenu = (e: React.MouseEvent, name: string, isCurrentlyActive: boolean) => {
+  const toggleSubMenu = (e: React.UIEvent, name: string, isCurrentlyActive: boolean) => {
     e.preventDefault();
+    e.stopPropagation();
     setExpandedMenus(prev => ({ 
       ...prev, 
       [name]: prev[name] !== undefined ? !prev[name] : !isCurrentlyActive 
@@ -113,10 +114,11 @@ export function Sidebar() {
                 <div className="h-4" />
               )}
               {group.items.map((item) => {
-                const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
+                const isSubItemActive = item.subItems?.some(sub => pathname === sub.href);
+                const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href)) || isSubItemActive;
                 const isPlaceholder = item.href === "#";
                 const hasSubItems = item.subItems && item.subItems.length > 0;
-                const isExpanded = expandedMenus[item.name] !== undefined ? expandedMenus[item.name] : isActive;
+                const isExpanded = expandedMenus[item.name] !== undefined ? expandedMenus[item.name] : (isActive || isSubItemActive);
 
                 return (
                   <div key={item.name} className="flex flex-col w-full">
@@ -135,11 +137,16 @@ export function Sidebar() {
                       <Link
                         href={item.href}
                         className={clsx("flex items-center flex-1", isDesktopOpen ? "gap-3 pl-3 py-2.5" : "justify-center p-2")}
-                        onClick={isPlaceholder ? (e) => e.preventDefault() : undefined}
+                        onClick={(e) => {
+                          if (isPlaceholder) e.preventDefault();
+                          if (hasSubItems && isDesktopOpen) {
+                            toggleSubMenu(e, item.name, isActive);
+                          }
+                        }}
                       >
                         <MaterialIcon name={item.icon} size="md" />
                         {isDesktopOpen && (
-                          <span className={clsx("font-headline whitespace-nowrap flex-1", (isActive && !hasSubItems) || (isExpanded && hasSubItems) ? "font-bold" : "font-semibold")}>
+                          <span className={clsx("font-headline whitespace-nowrap flex-1", (isActive && !hasSubItems) || isExpanded ? "font-bold" : "font-semibold")}>
                             {t(`navigation.${item.name}`, item.name)}
                           </span>
                         )}
@@ -188,8 +195,9 @@ export function Sidebar() {
           ))}
         </nav>
 
-        {/* Bottom Section — Generate Report Button & Status */}
+        {/* Bottom Section — Generate Report Button & Status (Hidden per request) */}
         <div className="mt-auto pt-6 border-t border-border-ghost/5 space-y-4">
+          {/* 
           {isDesktopOpen ? (
             <button className="w-full py-2.5 bg-primary text-on-primary text-xs font-bold rounded-lg shadow-lg hover:scale-[0.98] transition-transform active:scale-95 whitespace-nowrap">
               {t("sidebar.Generate Report", "Generate Report")}
@@ -198,7 +206,8 @@ export function Sidebar() {
             <button className="w-full aspect-square bg-primary text-on-primary text-xs font-bold rounded-lg shadow-lg hover:scale-[0.98] transition-transform active:scale-95 flex items-center justify-center">
               <MaterialIcon name="summarize" size="sm" />
             </button>
-          )}
+          )} 
+          */}
 
           {/* Scheduler Status */}
           <div className="px-1 flex flex-col gap-1.5">
