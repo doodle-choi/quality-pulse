@@ -8,7 +8,7 @@
     "Service Material Status": "서비스 자재 현황",
     "Quality Indicator Status": "품질 지표 현황",
     "Data Analyze": "데이터 분석",
-    "Visual Analytics": "시각 분석",
+    "Visual Lab": "시각화 실험실",
     "Data Hub": "데이터 허브",
     "AI Risk Forecast": "AI 리스크 예측",
     "World Issues": "세계 이슈",
@@ -19,7 +19,11 @@
     "Source Monitor": "소스 모니터",
     "Triage Agent": "트리아지 에이전트",
     "Crawler Logs": "크롤러 로그",
-    "Scheduler / Sync": "스케줄러 / 동기화"
+    "Scheduler / Sync": "스케줄러 / 동기화",
+    "Announcements": "공지사항",
+    "Visual Lab": "시각화 실험실",
+    "Metabase": "메타베이스",
+    "Superset": "슈퍼셋"
   },
   "header": {
     "Search placeholder": "분석 검색...",

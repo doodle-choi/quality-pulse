@@ -73,10 +73,9 @@ jobs:
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
-    # Temporarily disabled for server migration
-    if: false && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
     steps:
-      - name: Deploy to GCP VM
+      - name: Deploy to Production Server (DigitalOcean)
         uses: appleboy/ssh-action@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -91,20 +90,22 @@ jobs:
             # 1. GHCR Authentication
             echo $GITHUB_TOKEN | docker login ghcr.io -u ${{ github.actor }} --password-stdin
             
-            # 2. Cleanup old images to prevent 'no space' or 'EOF' network errors
-            docker system prune -af --filter "until=24h" || true
+            # 2. Aggressive Disk Cleanup (Crucial for small droplets)
+            docker system prune -f
             
-            # 3. Handle Repository
+            # 3. Handle Repository Synchronization
             if [ ! -d "$PROJECT_DIR" ]; then
               mkdir -p "$(dirname "$PROJECT_DIR")"
               git clone https://github.com/${{ github.repository }}.git "$PROJECT_DIR"
             fi
             cd "$PROJECT_DIR"
             
-            # 4. Fix dubious ownership Git issue
+            # 4. Handle Branch Switching and Pulling
             git config --global --add safe.directory "$PROJECT_DIR"
+            git fetch origin
+            git checkout ${{ github.ref_name }}
             git pull origin ${{ github.ref_name }}
             
-            # 5. Pull & Deploy
+            # 5. Production Rollout
             docker compose -f docker-compose.prod.yml pull
-            docker compose -f docker-compose.prod.yml up -d
+            docker compose -f docker-compose.prod.yml up -d --remove-orphans
