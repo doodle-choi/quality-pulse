@@ -18,8 +18,8 @@ export function Sidebar() {
   const [schedulerActive, setSchedulerActive] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>({});
 
-  const toggleSubMenu = (e: React.UIEvent, name: string, isCurrentlyActive: boolean) => {
-    e.preventDefault();
+  const toggleSubMenu = (e: React.UIEvent, name: string, isCurrentlyActive: boolean, preventDefault = true) => {
+    if (preventDefault) e.preventDefault();
     e.stopPropagation();
     setExpandedMenus(prev => ({ 
       ...prev, 
@@ -138,9 +138,12 @@ export function Sidebar() {
                         href={item.href}
                         className={clsx("flex items-center flex-1", isDesktopOpen ? "gap-3 pl-3 py-2.5" : "justify-center p-2")}
                         onClick={(e) => {
-                          if (isPlaceholder) e.preventDefault();
                           if (hasSubItems && isDesktopOpen) {
-                            toggleSubMenu(e, item.name, isActive);
+                            // If it's a placeholder, prevent default to avoid scrolling/refresh
+                            // If it's a real link (Dashboard '/'), don't prevent default so it navigates
+                            toggleSubMenu(e, item.name, isActive, isPlaceholder);
+                          } else if (isPlaceholder) {
+                            e.preventDefault();
                           }
                         }}
                       >
