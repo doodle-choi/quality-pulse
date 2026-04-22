@@ -34,7 +34,7 @@ export default function PerformanceDashboard() {
       {/* Header Optional - but keeping for context */}
       <header className="flex flex-col gap-1 mb-2">
         <h1 className="text-2xl font-headline font-extrabold text-text tracking-tight">
-          {t("navigation.Business Strategy", "Business Strategy")}
+          {t("strategy.performanceTitle", "Business Strategy Improvement Action Item and Plan")}
         </h1>
       </header>
 
