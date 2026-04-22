@@ -55,7 +55,7 @@ export function fetchMockQualityData(
     const currentElementBoundary = isCurrentYear ? (granularity === 'month' ? new Date().getMonth() + 1 : 15) : 999;
 
     for (let i = 1; i <= elements; i++) {
-        let valBase = baseTarget * (granularity === 'month' ? 0.08 : granularity === 'week' ? 0.02 : 1);
+        const valBase = baseTarget * (granularity === 'month' ? 0.08 : granularity === 'week' ? 0.02 : 1);
         
         // Add random seasonality and noise
         const seasonality = Math.sin((i / elements) * Math.PI) * (valBase * 0.3);

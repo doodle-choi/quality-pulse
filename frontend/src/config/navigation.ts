@@ -25,7 +25,7 @@ export const NAV_ITEMS: NavGroup[] = [
         ]
       },
       { 
-        name: "Business Strategy", 
+        name: "Business Structural Improvement",
         href: "/strategy/performance", 
         icon: "insights",
         subItems: [

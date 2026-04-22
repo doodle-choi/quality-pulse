@@ -11,7 +11,7 @@ export default function DetailsPage() {
       <header className="flex flex-col gap-1">
         <div className="flex items-center gap-2 text-text-muted">
           <MaterialIcon name="receipt_long" size="sm" />
-          <span className="text-[11px] font-black uppercase tracking-[0.2em] opacity-70">Business Strategy</span>
+          <span className="text-[11px] font-black uppercase tracking-[0.2em] opacity-70">{t("navigation.Business Structural Improvement", "Business Structural Improvement")}</span>
         </div>
         <h1 className="text-2xl font-headline font-extrabold text-text tracking-tight">
           {t("navigation.Execution Details", "Execution Details")}
